@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.core import validators
 from ckeditor.fields import RichTextField
-from django.db.models import Sum
+
 
 student_permission = []
 lecturer_permission = []
@@ -22,6 +22,13 @@ class BaseModel(models.Model):
 class Configuration(BaseModel):
     max_score_columns_quantity = models.IntegerField(null=False, default=5,
                                                      validators=[validators.MinValueValidator(2)])
+    base_domain = models.CharField(null=False, default="gmail.com")
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        if Configuration.objects.first() is not None:
+            raise ValidationError("Configuration is existing")
 
 
 class User(AbstractUser):
