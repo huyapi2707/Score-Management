@@ -11,6 +11,7 @@ from api.models import Configuration, Lecturer, Subject, Student, Course, ScoreC
     StudentScoreDetail
 
 subject_name = ["math", "physic", "science", "chemistry", "art", "english", "philosophy", "geography", "history", "biology"]
+default_base_domain = "gmail.com"
 
 def generate_course_name(key):
     return f'{key}-{random.randint(1000,9999)}'
@@ -24,6 +25,7 @@ class Command(BaseCommand):
 
         seeder.add_entity(Configuration, 1, {
             'max_score_columns_quantity': 5,
+            "base_domain": default_base_domain,
             "created_at": datetime.now(),
             "updated_at": datetime.now()
         })
@@ -36,7 +38,7 @@ class Command(BaseCommand):
             "is_staff": False,
             "created_at": datetime.now(),
             "updated_at": datetime.now(),
-            "email": seeder.faker.email(domain="gmail.com")
+            "email": seeder.faker.email(domain=default_base_domain)
 
         })
 
