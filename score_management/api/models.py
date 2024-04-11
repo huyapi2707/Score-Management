@@ -35,6 +35,7 @@ class User(AbstractUser):
     avatar = CloudinaryField(null=True)
     created_at = models.DateTimeField(auto_now=True, null=False)
     updated_at = models.DateTimeField(auto_now_add=True, null=False)
+    gender = models.BooleanField(null=True)
 
 class Student(User):
     class Meta:
