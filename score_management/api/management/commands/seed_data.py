@@ -64,24 +64,21 @@ class Command(BaseCommand):
             "end_date": datetime.now() + timedelta(weeks=12),
             "name": lambda x : generate_course_name("A")
         })
-        seeder.add_entity(ScoreColumn, 10, {
-            "name": "mid-term",
-            "percentage": 0.5,
-            "created_at": datetime.now(),
-            "updated_at": datetime.now()
-        })
-        seeder.add_entity(ScoreColumn, 10, {
-            "name": "end-term",
-            "percentage": 0.5,
-            "created_at": datetime.now(),
-            "updated_at": datetime.now()
-        })
 
         seeder.add_entity(StudentJoinCourse, 300, {
             "joined_date": datetime.now()
         })
-        seeder.add_entity(StudentScoreDetail, 500, {
-            "score": lambda x : random.randint(5, 10)
-        })
+
         seeder.execute()
+
+        # populate student scores
+
+        joins = StudentJoinCourse.objects.all()
+
+        for join in joins:
+            score_columns = join.course.score_columns.all()
+            for score_column in score_columns:
+                details = StudentScoreDetail.objects.create(score_column=score_column, student_join_course=join, score=random.randint(5,10))
+                details.save()
+
         self.stdout.write(self.style.SUCCESS('Database seeded successfully'))
