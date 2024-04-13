@@ -53,7 +53,9 @@ class Lecturer(User):
 
 class Subject(BaseModel):
     name = models.CharField(null=False, unique=True, max_length=255)
-    pass
+
+    def __str__(self):
+        return self.name
 
 
 class Course(BaseModel):
@@ -62,6 +64,9 @@ class Course(BaseModel):
     end_date = models.DateField(null=False)
     subject = models.ForeignKey(Subject, on_delete=models.RESTRICT, related_name="courses")
     lecturer = models.ForeignKey(Lecturer, on_delete=models.DO_NOTHING, related_name="teaching_courses")
+
+    def __str__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         super(Course, self).save(*args, **kwargs)
@@ -75,6 +80,7 @@ class Course(BaseModel):
 class ScoreColumn(BaseModel):
     class Meta:
         unique_together = ["name", "course_id"]
+        ordering = ['id']
 
     name = models.CharField(null=False, max_length=255)
     percentage = models.FloatField(null=False,
@@ -98,18 +104,18 @@ class ScoreColumn(BaseModel):
             super(ScoreColumn, self).save(*args, **kwargs)
 
 
-
 class StudentJoinCourse(models.Model):
-
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="join_course")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="students")
     joined_date = models.DateTimeField(null=False, auto_now=True)
 
 
-class StudentScoreDetail(models.Model):
 
+
+class StudentScoreDetail(models.Model):
     class Meta:
         unique_together = ["score_column", "student_join_course"]
+        ordering = ['score_column']
 
     student_join_course = models.ForeignKey(StudentJoinCourse, on_delete=models.DO_NOTHING, related_name="scores")
     score = models.FloatField(null=False,
@@ -119,6 +125,8 @@ class StudentScoreDetail(models.Model):
     def save(self, *args, **kwargs):
         self.score = round(self.score, 2)
         super(StudentScoreDetail, self).save(*args, **kwargs)
+
+
 
 
 class Forum(BaseModel):
