@@ -95,6 +95,7 @@ DATABASES = {
         'NAME': 'score_management_db',
         'USER': 'admin',
         'PASSWORD': 'admin',
+
     }
 }
 
