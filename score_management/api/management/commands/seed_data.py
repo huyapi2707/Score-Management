@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
         })
 
-        seeder.add_entity(Student, 200, {
+        seeder.add_entity(Student, 500, {
             "avatar": "https://res.cloudinary.com/ddgtjayoj/image/upload/v1712811626/rgntl7vnb09zu1ieemk5.jpg",
             "password": make_password("student"),
             "is_superuser": False,
@@ -65,7 +65,7 @@ class Command(BaseCommand):
             "name": lambda x : generate_course_name("A")
         })
 
-        seeder.add_entity(StudentJoinCourse, 300, {
+        seeder.add_entity(StudentJoinCourse, 800, {
             "joined_date": datetime.now()
         })
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         for join in joins:
             score_columns = join.course.score_columns.all()
             for score_column in score_columns:
-                details = StudentScoreDetail.objects.create(score_column=score_column, student_join_course=join, score=random.randint(5,10))
+                details = StudentScoreDetail.objects.create(score_column=score_column, student_join_course=join, score=random.randint(1,10))
                 details.save()
 
         self.stdout.write(self.style.SUCCESS('Database seeded successfully'))

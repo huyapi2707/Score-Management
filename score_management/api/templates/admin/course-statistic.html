@@ -25,25 +25,31 @@
                         {% endif %}
                     {% endfor %}
                 </select>
-                <div class="mt-3">
-                    <button type="button" class="btn btn-primary ">Export</button>
+                <div class="mt-3 d-flex ">
+                    <button onclick="exportData(this)" type="button" class="btn btn-primary ">Export</button>
+                    <div class="ms-3 d-flex align-items-center "><label class="form-label mx-2" for="pdf">PDF</label>
+                        <input checked type="radio" value="pdf" name="export_type" id="pdf">
+                        <label class="form-label mx-2" for="excel">Excel</label>
+                        <input type="radio" value="excel" name="export_type" id="excel"></div>
                 </div>
             </div>
 
             <div class="col-md-6 d-flex justify-content-end">
                 <div>
                     <h2>Course Information</h2>
-                    <p>ID: <span>{{ scores_data.id }}</span></p>
-                    <p>Name: <span>{{ scores_data.name }}</span></p>
-                    <p>Subject: <span class="text-capitalize">{{ scores_data.subject.name }}</span></p>
-                    <p>Lecturer: <span>{{ scores_data.lecturer.first_name }} {{ scores_data.lecturer.last_name }}</span>
+                    <p id="courseId">ID: <span>{{ scores_data.id }}</span></p>
+                    <p id="courseName">Name: <span>{{ scores_data.name }}</span></p>
+                    <p id="courseSubject">Subject: <span class="text-capitalize">{{ scores_data.subject.name }}</span>
                     </p>
-                    <p>Total student: <span>{{ scores_data.total_student }}</span></p>
+                    <p id="courseLecturer">Lecturer:
+                        <span>{{ scores_data.lecturer.first_name }} {{ scores_data.lecturer.last_name }}</span>
+                    </p>
+                    <p id="courseTotalStudent">Total student: <span>{{ scores_data.total_student }}</span></p>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12" id="scoreTable">
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -57,7 +63,7 @@
                                 {{ c.name }}
                             </th>
                         {% endfor %}
-                    <th>Summary</th>
+                        <th>Summary</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -81,9 +87,16 @@
                 </table>
             </div>
         </div>
-        <div class="row">
-            <h2>Chart</h2>
-            {{ scores_data }}
+        <div class="row d-flex justify-content-around mt-5">
+            <h2>Charts</h2>
+            <div class="col-md-4" id="chart"></div>
+            <div class="col-md-4" id="statisticDetail">
+                <h2>Details</h2>
+            </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.min.js" integrity="sha512-w3u9q/DeneCSwUDjhiMNibTRh/1i/gScBVp2imNVAMCt6cUHIw6xzhzcPFIaL3Q1EbI2l+nu17q2aLJJLo4ZYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="/static/js/admin.js" type="application/javascript" defer></script>
 {% endblock %}

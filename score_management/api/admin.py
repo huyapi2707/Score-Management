@@ -1,4 +1,3 @@
-
 import cloudinary
 
 from django.contrib import admin
@@ -10,9 +9,8 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
 
-
 from api import utils
-from api.models import User, Subject, Course, StudentJoinCourse, Configuration
+from api.models import User, Subject, Course, StudentJoinCourse, Configuration, Student, Lecturer, ScoreColumn
 
 
 # Register your models here.
@@ -36,13 +34,16 @@ class UserAdminForm(forms.ModelForm):
         return user
 
 
+
+
+
 class UserAdmin(admin.ModelAdmin):
     search_fields = ['id', 'first_name', 'last_name', 'email']
     list_display = ['id', 'first_name', 'last_name', 'email', 'gender', 'created_at', 'updated_at']
     readonly_fields = ['image']
     list_per_page = 100
     form = UserAdminForm
-
+    search_fields = ['id', 'first_name', 'last_name', 'email']
     def image(self, obj):
         if obj.avatar:
             if type(obj.avatar) is cloudinary.CloudinaryResource:
@@ -55,7 +56,7 @@ class CourseStudentInline(admin.TabularInline):
     readonly_fields = ['student_id', 'joined_date', 'first_name', 'last_name', 'email', 'gender', 'created_at',
                        'updated_at']
     can_delete = True
-    exclude = ['id']
+
     verbose_name = "Students join this course"
 
     def student_id(self, obj):
@@ -85,7 +86,7 @@ class SubjectAdmin(BaseAdmin):
 
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "subject", "lecturer", "created_at", "updated_at", "is_active", ]
+    list_display = ["id", "name", "subject", "lecturer", "created_at", "updated_at", "is_active"]
 
     def subject(self, obj):
         link = reverse("admin:api_subject_change", args=[obj.subject_id])
@@ -97,6 +98,46 @@ class CourseAdmin(admin.ModelAdmin):
 
     inlines = [CourseStudentInline]
 
+
+class StudentJoinCourseInline(admin.TabularInline):
+    model = StudentJoinCourse
+    verbose_name = 'Course has joined'
+    readonly_fields = ['course_id', 'course_name']
+
+    def course_id(self, obj):
+        return obj.course.id
+
+    def course_name(self, obj):
+        return obj.course.name
+
+
+class StudentAdmin(UserAdmin):
+    inlines = [StudentJoinCourseInline]
+
+    def get_queryset(self, request):
+        return Student.objects.filter(is_active=True)
+
+
+class LecturerJoinCourseInline(admin.TabularInline):
+    model = Course
+
+    readonly_fields = ['course_id', 'name', 'subject', 'start_date', 'end_date']
+    exclude = ['is_active']
+
+    def subject(self, obj):
+        return obj.subject.name
+
+    def course_id(self, obj):
+        return obj.id
+
+
+class LecturerAdmin(UserAdmin):
+    inlines = [LecturerJoinCourseInline]
+
+    def get_queryset(self, request):
+        return Lecturer.objects.filter(is_active=True)
+
+
 class ConfigurationAdmin(admin.ModelAdmin):
     list_display = ['max_score_columns_quantity', 'base_domain']
 
@@ -106,14 +147,13 @@ class ConfigurationAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+
 class ScoreManagementAdminSite(admin.AdminSite):
     site_header = "Score management administrator"
 
-
-
     def get_urls(self):
         return [
-            path('course-statistic/', self.admin_view(self.course_stat_view), name='Course statistic')
+            path('course-statistic', self.admin_view(self.course_stat_view), name='Course statistic')
         ] + super().get_urls()
 
     def course_stat_view(self, request):
@@ -123,8 +163,8 @@ class ScoreManagementAdminSite(admin.AdminSite):
 
         context = dict(
             self.each_context(request),
-            course_list = course_list,
-            scores_data= serializers.CourseWithStudentScoresSerializer(scores_data).data
+            course_list=course_list,
+            scores_data=serializers.CourseWithStudentScoresSerializer(scores_data).data
         )
 
         return TemplateResponse(request, 'admin/course-statistic.html', context)
@@ -147,10 +187,19 @@ class ScoreManagementAdminSite(admin.AdminSite):
         ]
         return app_list
 
+
+
+class ScoreColumnAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'percentage', 'course']
+
+
+
 admin_site = ScoreManagementAdminSite(name="Score Management")
 
 admin_site.register(User, UserAdmin)
 admin_site.register(Subject, SubjectAdmin)
 admin_site.register(Course, CourseAdmin)
 admin_site.register(Configuration, ConfigurationAdmin)
-
+admin_site.register(Student, StudentAdmin)
+admin_site.register(Lecturer, LecturerAdmin)
+admin_site.register(ScoreColumn, ScoreColumnAdmin)
