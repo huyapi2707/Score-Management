@@ -6,8 +6,8 @@ from django.core import validators
 from ckeditor.fields import RichTextField
 from django.db.models import Count, Sum
 
-student_permission = []
-lecturer_permission = []
+student_permission = [('student', 'Has student permissions')]
+lecturer_permission = [('lecturer', 'Has lecturer permissions')]
 
 
 class BaseModel(models.Model):
