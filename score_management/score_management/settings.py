@@ -95,6 +95,7 @@ DATABASES = {
         'NAME': 'score_management_db',
         'USER': 'admin',
         'PASSWORD': 'admin',
+
     }
 }
 
@@ -149,6 +150,16 @@ cloudinary.config(
 CKEDITOR_UPLOAD_PATH = "scoreManagement/images"
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+
+#Mail
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dangdinhhuyisme@gmail.com'
+EMAIL_HOST_PASSWORD = 'kggq xlce prbq luvi'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'dangdinhhuyisme@gmail.com'
 
 CLIENT_ID = 'eR8z7RtJeDMZcAi8ymKz1wvGHif4Sc7HQXfl7Rye'
 CLIENT_SECRECT = 'lZucLpd6mVIORpT2tECuI3zXxPjtRwV8kzNWfhUW8AG5XtHtcUJFV4tdEooBHkd29Mo85KyWRGPy1XI4Fmh5qZOfGRm9gecFT67csTLcER0adAYkIIIz1oBvUAqMVleZ'

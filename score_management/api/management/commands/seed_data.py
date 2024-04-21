@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import random
 
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import Permission
 from django.core.management.base import BaseCommand
 
 from django_seed import Seed
@@ -10,16 +11,18 @@ from django_seed.providers import Provider
 from api.models import Configuration, Lecturer, Subject, Student, Course, ScoreColumn, StudentJoinCourse, \
     StudentScoreDetail
 
-subject_name = ["math", "physic", "science", "chemistry", "art", "english", "philosophy", "geography", "history", "biology"]
+subject_name = ["math", "physic", "science", "chemistry", "art", "english", "philosophy", "geography", "history",
+                "biology"]
 default_base_domain = "gmail.com"
 
-def generate_course_name(key):
-    return f'{key}-{random.randint(1000,9999)}'
 
+def generate_course_name(key):
+    return f'{key}-{random.randint(1000, 9999)}'
 
 
 class Command(BaseCommand):
     help("Seed the database")
+
     def handle(self, *args, **options):
         seeder = Seed.seeder(locale="en-us")
 
@@ -42,7 +45,7 @@ class Command(BaseCommand):
 
         })
 
-        seeder.add_entity(Student, 200, {
+        seeder.add_entity(Student, 500, {
             "avatar": "https://res.cloudinary.com/ddgtjayoj/image/upload/v1712811626/rgntl7vnb09zu1ieemk5.jpg",
             "password": make_password("student"),
             "is_superuser": False,
@@ -62,26 +65,39 @@ class Command(BaseCommand):
             "updated_at": datetime.now(),
             "start_date": datetime.now(),
             "end_date": datetime.now() + timedelta(weeks=12),
-            "name": lambda x : generate_course_name("A")
-        })
-        seeder.add_entity(ScoreColumn, 10, {
-            "name": "mid-term",
-            "percentage": 0.5,
-            "created_at": datetime.now(),
-            "updated_at": datetime.now()
-        })
-        seeder.add_entity(ScoreColumn, 10, {
-            "name": "end-term",
-            "percentage": 0.5,
-            "created_at": datetime.now(),
-            "updated_at": datetime.now()
+            "name": lambda x: generate_course_name("A")
         })
 
-        seeder.add_entity(StudentJoinCourse, 300, {
+        seeder.add_entity(StudentJoinCourse, 800, {
             "joined_date": datetime.now()
         })
-        seeder.add_entity(StudentScoreDetail, 500, {
-            "score": lambda x : random.randint(5, 10)
-        })
+
         seeder.execute()
+
+        lecturer_permissions = Permission.objects.get(codename='lecturer')
+        student_permission = Permission.objects.get(codename='student')
+
+        # add student permission
+
+        students = Student.objects.all()
+        for student in students:
+            student.user_permissions.add(student_permission)
+
+        # add lecturer permission
+
+        lecturers = Lecturer.objects.all()
+        for lecturer in lecturers:
+            lecturer.user_permissions.add(lecturer_permissions)
+
+        # populate student scores
+
+        joins = StudentJoinCourse.objects.all()
+
+        for join in joins:
+            score_columns = join.course.score_columns.all()
+            for score_column in score_columns:
+                details = StudentScoreDetail.objects.create(score_column=score_column, student_join_course=join,
+                                                            score=random.randint(1, 10))
+                details.save()
+
         self.stdout.write(self.style.SUCCESS('Database seeded successfully'))
