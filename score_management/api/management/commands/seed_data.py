@@ -62,7 +62,7 @@ class Command(BaseCommand):
             "updated_at": datetime.now(),
             "start_date": datetime.now(),
             "end_date": datetime.now() + timedelta(weeks=12),
-            "name": lambda x : generate_course_name("A")
+            "name": lambda x: generate_course_name("A")
         })
 
         seeder.add_entity(StudentJoinCourse, 300, {

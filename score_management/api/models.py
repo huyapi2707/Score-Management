@@ -38,6 +38,9 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now_add=True, null=False)
     gender = models.BooleanField(null=True)
 
+    def __str__(self):
+        return self.first_name
+
 
 class Student(User):
     class Meta:
@@ -138,3 +141,5 @@ class ForumAnswer(BaseModel):
     content = RichTextField()
     owner = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name="answer_forums")
     parent = models.ForeignKey('ForumAnswer', on_delete=models.CASCADE, null=True, related_name="children")
+
+

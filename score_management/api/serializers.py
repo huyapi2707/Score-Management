@@ -9,6 +9,14 @@ class UserSerializer(serializers.ModelSerializer):
         rep['avatar'] = instance.avatar.url
         return rep
 
+    def create(self, validated_data):
+        data = validated_data.copy()
+        user = User(**data)
+        user.set_password(data["password"])
+        user.save()
+
+        return user
+
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'username','password', 'avatar', 'gender']
