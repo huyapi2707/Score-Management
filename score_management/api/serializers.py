@@ -1,4 +1,4 @@
-from django.db.models import Count, Sum, F
+from django.db.models import  Sum, F
 from rest_framework import serializers
 from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject
 

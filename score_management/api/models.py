@@ -6,8 +6,8 @@ from django.core import validators
 from ckeditor.fields import RichTextField
 from django.db.models import Count, Sum
 
-student_permission = []
-lecturer_permission = []
+student_permission = [('student', 'Has student permissions')]
+lecturer_permission = [('lecturer', 'Has lecturer permissions')]
 
 
 class BaseModel(models.Model):
@@ -43,19 +43,21 @@ class User(AbstractUser):
 
 
 class Student(User):
+
     class Meta:
-        proxy = True
         permissions = student_permission
 
 
+
 class Lecturer(User):
+
     class Meta:
-        proxy = True
-        permissions = []
+        permissions = lecturer_permission
 
 
 class Subject(BaseModel):
     name = models.CharField(null=False, unique=True, max_length=255)
+
 
     def __str__(self):
         return self.name
@@ -108,11 +110,14 @@ class ScoreColumn(BaseModel):
 
 
 class StudentJoinCourse(models.Model):
+
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="join_course")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="students")
     joined_date = models.DateTimeField(null=False, auto_now=True)
 
-
+    class Meta:
+        unique_together = ['id', 'student']
 
 
 class StudentScoreDetail(models.Model):
