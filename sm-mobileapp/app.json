@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "sm-mobileapp",
+    "slug": "sm-mobileapp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "sm-mobileapp"
+}
