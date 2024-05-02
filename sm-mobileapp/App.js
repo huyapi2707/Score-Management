@@ -1,21 +1,69 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-
+import React, { useReducer, useState } from "react";
+import { View, Text } from "react-native";
+import globalStyle from "./configs/globalStyle";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import {
+  PaperProvider,
+  Dialog,
+  Portal,
+  Button,
+  ActivityIndicator,
+} from "react-native-paper";
+import theme from "./configs/theme";
+import { GlobalStoreContext, globalStoreReducer } from "./configs/context";
+import * as actions from "./configs/actions";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
 export default function App() {
+  const [globalStore, globalStoreDispatcher] = useReducer(globalStoreReducer, {
+    alert: {},
+    indicator: {
+      visible: false,
+    },
+  });
+  const MainStack = createNativeStackNavigator();
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <PaperProvider theme={theme}>
+      <GlobalStoreContext.Provider value={globalStoreDispatcher}>
+        <View style={globalStyle.container}>
+          <Portal>
+            <Dialog visible={globalStore.alert.visible}>
+              <Dialog.Icon
+                color={globalStore.alert.color}
+                icon={globalStore.alert.icon}
+              />
+              <Dialog.Title>{globalStore.alert.title}</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">{globalStore.alert.content}</Text>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button
+                  onPress={() => globalStoreDispatcher(actions.turnOffAlert())}
+                >
+                  OK
+                </Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+          {globalStore.indicator.visible && (
+            <View style={globalStyle.activityIndicator}>
+              <ActivityIndicator size="large" />
+            </View>
+          )}
+          <NavigationContainer>
+            <MainStack.Navigator
+              initialRouteName="login"
+              screenOptions={{
+                title: null,
+              }}
+            >
+              <MainStack.Screen name="login" component={Login} />
+              <MainStack.Screen name="register" component={Register} />
+            </MainStack.Navigator>
+          </NavigationContainer>
+        </View>
+      </GlobalStoreContext.Provider>
+    </PaperProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
