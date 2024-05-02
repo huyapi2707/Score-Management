@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, KeyboardAvoidingView } from "react-native";
 import {
   Button,
   Divider,
@@ -25,7 +25,7 @@ const Register = ({ navigation }) => {
           Register
         </Text>
       </View>
-      <View style={[formStyle.formGroup]}>
+      <KeyboardAvoidingView style={[formStyle.formGroup]}>
         <TextInput
           theme={{ roundness: 15 }}
           mode="outlined"
@@ -93,7 +93,7 @@ const Register = ({ navigation }) => {
             <Text style={{ color: "#1E90FF" }}>Login</Text>
           </Text>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };

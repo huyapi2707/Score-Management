@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, KeyboardAvoidingView } from "react-native";
 import globalStyle from "./configs/globalStyle";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -26,7 +26,7 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <GlobalStoreContext.Provider value={globalStoreDispatcher}>
-        <View style={globalStyle.container}>
+        <KeyboardAvoidingView style={globalStyle.container}>
           <Portal>
             <Dialog visible={globalStore.alert.visible}>
               <Dialog.Icon
@@ -62,7 +62,7 @@ export default function App() {
               <MainStack.Screen name="register" component={Register} />
             </MainStack.Navigator>
           </NavigationContainer>
-        </View>
+        </KeyboardAvoidingView>
       </GlobalStoreContext.Provider>
     </PaperProvider>
   );
