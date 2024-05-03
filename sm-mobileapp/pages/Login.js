@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import {
   Button,
   Divider,
@@ -22,7 +22,11 @@ const Login = ({ navigation }) => {
   return (
     <View>
       <View style={[globalStyle.flexCenter, formStyle.titile]}>
-        <Text variant="displaySmall" style={{ fontWeight: "bold" }}>
+        <Image
+          style={globalStyle.logo}
+          source={require("../assets/pictures/logo.png")}
+        />
+        <Text variant="headlineLarge" style={{ fontWeight: "bold" }}>
           Login
         </Text>
       </View>

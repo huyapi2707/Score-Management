@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView } from "react-native";
+import { View, KeyboardAvoidingView, Image } from "react-native";
 import {
   Button,
   Divider,
@@ -21,7 +21,11 @@ const Register = ({ navigation }) => {
   return (
     <View>
       <View style={[globalStyle.flexCenter, formStyle.titile]}>
-        <Text variant="displaySmall" style={{ fontWeight: "bold" }}>
+        <Image
+          style={globalStyle.logo}
+          source={require("../assets/pictures/logo.png")}
+        />
+        <Text variant="headlineLarge" style={{ fontWeight: "bold" }}>
           Register
         </Text>
       </View>

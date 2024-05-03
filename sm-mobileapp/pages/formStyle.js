@@ -3,6 +3,9 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   titile: {
     marginVertical: 30,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
   },
   formControl: {
     marginVertical: 5,

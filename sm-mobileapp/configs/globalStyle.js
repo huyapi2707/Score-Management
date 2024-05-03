@@ -20,4 +20,8 @@ export default StyleSheet.create({
     height: "100%",
     zIndex: 2,
   },
+  logo: {
+    width: 80,
+    height: 80,
+  },
 });
