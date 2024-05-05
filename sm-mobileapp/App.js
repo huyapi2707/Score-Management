@@ -1,8 +1,10 @@
 import React, { useReducer, useState } from "react";
+
 import { View, Text, KeyboardAvoidingView } from "react-native";
 import globalStyle from "./configs/globalStyle";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Home from "./pages/Home";
 import {
   PaperProvider,
   Dialog,
@@ -15,6 +17,7 @@ import { GlobalStoreContext, globalStoreReducer } from "./configs/context";
 import * as actions from "./configs/actions";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+
 export default function App() {
   const [globalStore, globalStoreDispatcher] = useReducer(globalStoreReducer, {
     alert: {},
@@ -22,6 +25,7 @@ export default function App() {
       visible: false,
     },
   });
+
   const MainStack = createNativeStackNavigator();
   return (
     <PaperProvider theme={theme}>
@@ -56,10 +60,12 @@ export default function App() {
               initialRouteName="login"
               screenOptions={{
                 title: null,
+                headerTransparent: true,
               }}
             >
               <MainStack.Screen name="login" component={Login} />
               <MainStack.Screen name="register" component={Register} />
+              <MainStack.Screen name="home" component={Home} />
             </MainStack.Navigator>
           </NavigationContainer>
         </KeyboardAvoidingView>
