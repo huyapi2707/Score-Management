@@ -3,6 +3,8 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+    marginTop: 50,
   },
   flexCenter: {
     display: "flex",
@@ -23,5 +25,8 @@ export default StyleSheet.create({
   logo: {
     width: 80,
     height: 80,
+  },
+  padding: {
+    paddingHorizontal: 20,
   },
 });
