@@ -32,3 +32,5 @@ def statistic_score_by_course_id(id):
 
         return result
 
+
+
