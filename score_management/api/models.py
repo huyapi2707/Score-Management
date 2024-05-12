@@ -143,3 +143,9 @@ class ForumAnswer(BaseModel):
     content = RichTextField()
     owner = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name="answer_forums")
     parent = models.ForeignKey('ForumAnswer', on_delete=models.CASCADE, null=True, related_name="children")
+
+
+class ChatKey(models.Model):
+    key = models.CharField(max_length=255, null=False)
+    sender = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name='sent_messages')
+    receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name='received_messages')

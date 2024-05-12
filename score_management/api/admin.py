@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import cloudinary
 
 from django.contrib import admin
@@ -8,10 +10,9 @@ from django.urls import reverse, path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
-
 from api import utils
 from api.models import User, Subject, Course, StudentJoinCourse, Configuration, Student, Lecturer, ScoreColumn
-
+from api.firebase import firebase_database
 
 # Register your models here.
 
@@ -34,9 +35,6 @@ class UserAdminForm(forms.ModelForm):
         return user
 
 
-
-
-
 class UserAdmin(admin.ModelAdmin):
     search_fields = ['id', 'first_name', 'last_name', 'email']
     list_display = ['id', 'first_name', 'last_name', 'email', 'gender', 'created_at', 'updated_at']
@@ -44,6 +42,7 @@ class UserAdmin(admin.ModelAdmin):
     list_per_page = 100
     form = UserAdminForm
     search_fields = ['id', 'first_name', 'last_name', 'email']
+
     def image(self, obj):
         if obj.avatar:
             if type(obj.avatar) is cloudinary.CloudinaryResource:
@@ -148,12 +147,22 @@ class ConfigurationAdmin(admin.ModelAdmin):
         return False
 
 
+class MessageForm(forms.Form):
+    users = User.objects.filter(is_active=True).exclude(username='admin')
+    CHOICES = [(u.id, u.username) for u in users]
+    CHOICES.insert(0, (-1, "All"))
+    CHOICES = tuple(CHOICES)
+    message = forms.CharField(widget=forms.Textarea, label="Write new message:")
+    user = forms.ChoiceField(choices=CHOICES, label="Select user:")
+
+
 class ScoreManagementAdminSite(admin.AdminSite):
     site_header = "Score management administrator"
 
     def get_urls(self):
         return [
-            path('course-statistic', self.admin_view(self.course_stat_view), name='Course statistic')
+            path('course-statistic', self.admin_view(self.course_stat_view), name='Course statistic'),
+            path('send_messages', self.admin_view(self.send_message_view), name='Send messages')
         ] + super().get_urls()
 
     def course_stat_view(self, request):
@@ -167,7 +176,36 @@ class ScoreManagementAdminSite(admin.AdminSite):
             scores_data=serializers.CourseWithStudentScoresSerializer(scores_data).data
         )
 
-        return TemplateResponse(request, 'admin/course-statistic.html', context)
+        return TemplateResponse(request, 'admin/course_statistic.html', context)
+
+    def send_message_view(self, request):
+        form = None
+        if request.method == "POST":
+            form = MessageForm(request.POST)
+            if form.is_valid():
+                message = form.cleaned_data.get("message")
+                user_id = int(form.cleaned_data.get("user"))
+                if user_id == -1:
+                    data = {
+                        'message': message,
+                        'timestamp': datetime.now().timestamp() * 1000
+                    }
+
+                    firebase_database.child("announcements").push(data)
+
+                else:
+                    utils.send_message(sender_id=request.user.id, receiver_id=user_id, message=message)
+
+
+
+        elif request.method == "GET":
+            form = MessageForm()
+        context = dict(
+            self.each_context(request),
+            form=form,
+
+        )
+        return TemplateResponse(request, 'admin/send_message.html', context)
 
     def get_app_list(self, request, app_label=None):
         app_list = super().get_app_list(request)
@@ -181,6 +219,12 @@ class ScoreManagementAdminSite(admin.AdminSite):
                         "label": "course_statistic",
                         "admin_url": "/admin/course-statistic",
                         "view_only": True
+                    },
+                    {
+                        "name": "Send messages",
+                        "label": "send_message",
+                        "admin_url": "/admin/send_messages",
+                        "view_only": True
                     }
                 ]
             }
@@ -188,10 +232,8 @@ class ScoreManagementAdminSite(admin.AdminSite):
         return app_list
 
 
-
 class ScoreColumnAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'percentage', 'course']
-
 
 
 admin_site = ScoreManagementAdminSite(name="Score Management")

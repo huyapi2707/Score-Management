@@ -6,18 +6,98 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import formStyle from "./formStyle";
-import globalStyle from "../configs/globalStyle";
+import formStyle from "../styles/formStyle";
+import globalStyle from "../styles/globalStyle";
 import { useContext, useState } from "react";
-import { GlobalStoreContext } from "../configs/context";
+import {
+  AuthenticationContext,
+  GlobalStoreContext,
+  clientId,
+  clientSecret,
+} from "../configs/context";
 import * as actions from "../configs/actions";
+import { apis, endpoint } from "../configs/apis";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Login = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const globalStoreDispatcher = useContext(GlobalStoreContext);
-  const handleLogin = () => {
-    globalStoreDispatcher(actions.turnOnIndicator());
+  const { userDispatcher } = useContext(AuthenticationContext);
+  const handleLogin = async () => {
+    try {
+      globalStoreDispatcher(actions.turnOnIndicator());
+      if (username === "") {
+        globalStoreDispatcher(
+          actions.setWarningAlert({
+            title: "Missing field",
+            content: "Please enter your username",
+          })
+        );
+        return;
+      }
+      if (password === "") {
+        globalStoreDispatcher(
+          actions.setWarningAlert({
+            title: "Missing field",
+            content: "Please enter your password",
+          })
+        );
+        return;
+      }
+      const authData = {
+        grant_type: "password",
+        username: username,
+        password: password,
+        client_id: clientId,
+        client_secret: clientSecret,
+      };
+
+      const res = await apis()
+        .post(endpoint.auth, authData)
+        .catch((error) => {
+          if (error.response.status === 400) {
+            globalStoreDispatcher(
+              actions.setErrorAlert({
+                title: "Login failed",
+                content: "Wrong username or password",
+              })
+            );
+          }
+        });
+
+      if (res !== undefined) {
+        await AsyncStorage.setItem("accessToken", res.data["access_token"]);
+        const userInforResponse = await apis(res.data["access_token"])
+          .get(endpoint.userInfor)
+          .catch((error) => {
+            globalStoreDispatcher(
+              actions.setErrorAlert({
+                title: "Login failed",
+                content: "Something went wrong!!",
+              })
+            );
+          });
+        if (userInforResponse !== undefined) {
+          userDispatcher({
+            type: "LOGIN",
+            payload: userInforResponse.data,
+          });
+        }
+      } else {
+        globalStoreDispatcher(
+          actions.setErrorAlert({
+            title: "Login failed",
+            content: "Something went wrong!!",
+          })
+        );
+      }
+    } catch (ex) {
+      console.error(ex);
+    } finally {
+      globalStoreDispatcher(actions.turnOffIndicator());
+    }
   };
   return (
     <View>

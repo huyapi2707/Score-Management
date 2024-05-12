@@ -242,7 +242,7 @@ async function exportData(element) {
     element.disabled = true
     const courseId = document.getElementById('course').value
     if (headers === null || studentDataList === null) {
-        const currentScoreData = await fetch(`/courses/${courseId}/scores`).then(res => res.json())
+        const currentScoreData = await fetch(`/courses/${courseId}/all_scores`).then(res => res.json())
         await extractStudentScoreData(currentScoreData)
 
     }

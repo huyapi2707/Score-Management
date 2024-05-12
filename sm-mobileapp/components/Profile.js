@@ -1,8 +1,12 @@
 import { View, Image } from "react-native";
 import { Button, Divider, Icon, List, Text } from "react-native-paper";
-import componentsStyles from "./styles";
-import globalStyle from "../configs/globalStyle";
+import componentsStyles from "../styles/componentsStyle";
+import globalStyle from "../styles/globalStyle";
+import { useContext } from "react";
+import { AuthenticationContext } from "../configs/context";
+
 const Profile = () => {
+  const { user } = useContext(AuthenticationContext);
   return (
     <View>
       <View>
@@ -12,28 +16,35 @@ const Profile = () => {
         />
         <Image
           style={componentsStyles.userProfileAvatar}
-          source={require("../assets/pictures/userProfileImg.jpg")}
+          source={{ uri: user["avatar"] }}
         />
       </View>
       <View style={[globalStyle.flexCenter, componentsStyles.userProfileName]}>
         <Text variant="titleMedium" style={{ marginVertical: 10 }}>
-          Username
+          {user["username"]}
         </Text>
-        <Text variant="titleLarge">Fullname</Text>
+        <Text variant="titleLarge">
+          {user["first_name"] + " " + user["last_name"]}
+        </Text>
       </View>
       <View style={globalStyle.padding}>
         <Divider style={{ marginVertical: 20 }}></Divider>
         <List.Section>
           <List.Item
             title="Email"
-            description="example@gmail.com"
+            description={user["email"]}
             left={(props) => <List.Icon {...props} icon="email" />}
           />
 
           <List.Item
             title="Gender"
-            description="Item description"
-            left={(props) => <List.Icon {...props} icon="gender-male" />}
+            description={user["gender"] ? "Male" : "Female"}
+            left={(props) => (
+              <List.Icon
+                {...props}
+                icon={user["gender"] ? "gender-male" : "gender-female"}
+              />
+            )}
           />
         </List.Section>
         <Divider style={{ marginVertical: 20 }} />

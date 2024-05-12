@@ -1,22 +1,52 @@
 from django.db.models import  Sum, F
 from rest_framework import serializers
-from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject
+from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, ChatKey
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.SerializerMethodField()
+
+    def get_role(self, instance):
+
+        if instance.has_perm('api.lecturer'):
+            return "lecturer"
+        if instance.has_perm('api.student'):
+            return "student"
+
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['avatar'] = instance.avatar.url
+        if instance.avatar:
+            rep['avatar'] = instance.avatar.url
+        else:
+            rep['avatar'] = 'https://res.cloudinary.com/ddgtjayoj/image/upload/v1712811626/rgntl7vnb09zu1ieemk5.jpg'
         return rep
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username','password', 'avatar', 'gender']
+        fields = ['id', 'first_name', 'last_name', 'email', 'username','password', 'avatar', 'gender', 'role']
         extra_kwargs = {
             'password': {
                 'write_only': True
             }
         }
+
+class UserPublicInforSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.avatar:
+            rep['avatar'] = instance.avatar.url
+        else:
+            rep['avatar'] = 'https://res.cloudinary.com/ddgtjayoj/image/upload/v1712811626/rgntl7vnb09zu1ieemk5.jpg'
+        return rep
+    class Meta:
+        model = User
+        fields = ['username', 'avatar', 'id']
+
+
+class UserChatKeySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatKey
+        fields = ['key', 'sender_id']
 
 
 class SubjectSerializer(serializers.ModelSerializer):
