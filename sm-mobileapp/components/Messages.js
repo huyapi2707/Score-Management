@@ -6,29 +6,21 @@ import {
 } from "react-native";
 import { List, Avatar, FAB, Badge, Text } from "react-native-paper";
 import globalStyle from "../styles/globalStyle";
-import {
-  act,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
-import { firebase } from "@react-native-firebase/database";
 import { apis, endpoint } from "../configs/apis";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AuthenticationContext, GlobalStoreContext } from "../configs/context";
+import {
+  AuthenticationContext,
+  GlobalStoreContext,
+  firebaseDatabase,
+} from "../configs/context";
 import * as action from "../configs/actions";
+import NewMessage from "./NewMessage";
+import { useRef, useContext, useState, useReducer, useEffect } from "react";
 const Messages = ({ navigation, messageKeys }) => {
-  const database = useRef(
-    firebase
-      .app()
-      .database(
-        "https://lms-chats-default-rtdb.asia-southeast1.firebasedatabase.app/"
-      )
-  );
+  const database = useRef(firebaseDatabase);
   const globalStoreDispatcher = useContext(GlobalStoreContext);
   const { user } = useContext(AuthenticationContext);
+
   const messageReducer = (currentState, action) => {
     switch (action.type) {
       case "LATEST_MESSAGE":
@@ -84,13 +76,13 @@ const Messages = ({ navigation, messageKeys }) => {
     };
   }, []);
 
-  const fetchUserInfor = async (userId) => {
+  const fetchUserInfor = async (userId, key) => {
     const accessToken = await AsyncStorage.getItem("accessToken");
     const response = await apis(accessToken).get(
       endpoint.userPublicInfor(userId)
     );
     if (response) {
-      return response.data;
+      return { data: response.data, currentKey: key };
     }
     return null;
   };
@@ -111,36 +103,42 @@ const Messages = ({ navigation, messageKeys }) => {
               },
             });
           }
+          continue;
         }
-        fetchUserInfor(messageKeys[key]["opponent_id"]).then((res) => {
-          if (res) {
-            messageDispatcher({
-              type: "NEW_MESSAGE",
-              payload: {
-                [key]: {
-                  opponentId: res["id"],
-                  senderName: res["username"],
-                  senderAvatar: res["avatar"],
-                  unread: messageKeys[key]["unread"] > 0,
-                },
-              },
-            });
-            const messageRef = database.current.ref(`/chats/${key}/messages/`);
-            allMessageRefs.current = {
-              ...allMessageRefs,
-              [key]: messageRef,
-            };
-            messageRef.limitToLast(1).on("child_added", (snapshot) => {
+
+        fetchUserInfor(messageKeys[key]["opponent_id"], key).then(
+          ({ data, currentKey }) => {
+            if (data) {
               messageDispatcher({
-                type: "LATEST_MESSAGE",
+                type: "NEW_MESSAGE",
                 payload: {
-                  key: key,
-                  latestMessage: snapshot.val()["message"],
+                  [currentKey]: {
+                    opponentId: data["id"],
+                    senderName: data["username"],
+                    senderAvatar: data["avatar"],
+                    unread: messageKeys[key]["unread"] > 0,
+                  },
                 },
               });
-            });
+              const messageRef = database.current.ref(
+                `/chats/${key}/messages/`
+              );
+              allMessageRefs.current = {
+                ...allMessageRefs,
+                [key]: messageRef,
+              };
+              messageRef.limitToLast(1).on("child_added", (snapshot) => {
+                messageDispatcher({
+                  type: "LATEST_MESSAGE",
+                  payload: {
+                    key: key,
+                    latestMessage: snapshot.val()["message"],
+                  },
+                });
+              });
+            }
           }
-        });
+        );
       }
     } catch (error) {
       console.log(error);
@@ -150,9 +148,10 @@ const Messages = ({ navigation, messageKeys }) => {
   }, [messageKeys]);
 
   const { height } = useWindowDimensions();
-
+  const [openNewMessage, setOpenNewMessage] = useState(false);
   return (
     <View style={[globalStyle.list, { height: height }]}>
+      <NewMessage visible={openNewMessage} setVisible={setOpenNewMessage} />
       <ScrollView showsVerticalScrollIndicator={false}>
         {Object.keys(messages).map((key) => {
           return (
@@ -197,7 +196,13 @@ const Messages = ({ navigation, messageKeys }) => {
           );
         })}
       </ScrollView>
-      <FAB icon="plus" style={globalStyle.fab} />
+      <FAB
+        onPress={() => {
+          setOpenNewMessage(true);
+        }}
+        icon="plus"
+        style={globalStyle.fab}
+      />
     </View>
   );
 };
