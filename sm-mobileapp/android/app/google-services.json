@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "74220990475",
+    "firebase_url": "https://lms-chats-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "lms-chats",
+    "storage_bucket": "lms-chats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74220990475:android:23453fabcdf8ac06e8570e",
+        "android_client_info": {
+          "package_name": "com.smmobileapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC27i19hlPB8lcziiD9pKQit7awLqJgEC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,14 @@
 {
   "expo": {
+    "android": {
+      "googleServicesFile": "D:\\\\Code\\Lms\\Score-Management\\sm-mobileapp\\android\\app\\google-services.json",
+      "package": "com.smmobileapp"
+    },
     "name": "sm-mobileapp",
     "slug": "sm-mobileapp",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"],
+    "plugin": ["@react-native-firebase/app", "@react-native-firebase/database"]
   },
   "name": "sm-mobileapp"
 }

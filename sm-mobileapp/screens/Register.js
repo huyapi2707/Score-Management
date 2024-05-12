@@ -6,8 +6,8 @@ import {
   Text,
   TextInput,
 } from "react-native-paper";
-import formStyle from "./formStyle";
-import globalStyle from "../configs/globalStyle";
+import formStyle from "../styles/formStyle";
+import globalStyle from "../styles/globalStyle";
 import { useState } from "react";
 
 const Register = ({ navigation }) => {
