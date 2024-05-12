@@ -40,7 +40,7 @@ class UserPublicInforSerializer(serializers.ModelSerializer):
         return rep
     class Meta:
         model = User
-        fields = ['username', 'avatar', 'id']
+        fields = ['username', 'avatar', 'id', 'first_name', 'last_name']
 
 
 class UserChatKeySerializer(serializers.ModelSerializer):

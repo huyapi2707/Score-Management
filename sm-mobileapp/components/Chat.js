@@ -11,7 +11,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { firebase } from "@react-native-firebase/database";
 import moment from "moment";
 import componentsStyles from "../styles/componentsStyle";
-import { AuthenticationContext, GlobalStoreContext } from "../configs/context";
+import {
+  AuthenticationContext,
+  GlobalStoreContext,
+  firebaseDatabase,
+} from "../configs/context";
 import * as action from "../configs/actions";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -32,45 +36,41 @@ const Chat = ({ route }) => {
         return;
       }
       if (messageKey.current === "admin") {
-        messageRef.current = firebase
-          .app()
-          .database(
-            "https://lms-chats-default-rtdb.asia-southeast1.firebasedatabase.app/"
-          )
-          .ref("/announcements/");
+        messageRef.current = firebaseDatabase.ref("/announcements/");
       } else {
-        messageRef.current = firebase
-          .app()
-          .database(
-            "https://lms-chats-default-rtdb.asia-southeast1.firebasedatabase.app/"
-          )
-          .ref(`/chats/${messageKey.current}/messages/`);
+        messageRef.current = firebaseDatabase.ref(
+          `/chats/${messageKey.current}/messages/`
+        );
       }
 
       messageRef.current
         .orderByChild("timestamp")
         .limitToLast(1)
         .on("value", (snapshot) => {
-          snapshot.forEach((s) => {
-            setMessages((messages) => {
-              return {
-                ...messages,
-                [s.key]: s.val(),
-              };
+          if (snapshot.val()) {
+            snapshot.forEach((s) => {
+              setMessages((messages) => {
+                return {
+                  ...messages,
+                  [s.key]: s.val(),
+                };
+              });
             });
-          });
+          }
         });
       messageRef.current
         .orderByChild("timestamp")
         .limitToLast(5)
         .once("value")
         .then((snapshot) => {
-          let temp = null;
-          snapshot.forEach((s) => {
-            temp = { ...temp, [s.key]: s.val() };
-          });
+          if (snapshot.val()) {
+            let temp = null;
+            snapshot.forEach((s) => {
+              temp = { ...temp, [s.key]: s.val() };
+            });
 
-          setMessages(temp);
+            setMessages(temp);
+          }
         });
     } catch (error) {
       console.error(error);
@@ -129,11 +129,7 @@ const Chat = ({ route }) => {
       message: newMessage,
       timestamp: Date.now(),
     });
-    const database = firebase
-      .app()
-      .database(
-        "https://lms-chats-default-rtdb.asia-southeast1.firebasedatabase.app/"
-      );
+    const database = firebaseDatabase;
     const opponentRef = database.ref(
       `/user_key/${infor[messageKey.current]["opponentId"]}/${
         messageKey.current
@@ -168,8 +164,10 @@ const Chat = ({ route }) => {
         </Text>
       </View>
       <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
         onScroll={loadMoreMessages}
-        contentContainerStyle={[globalStyle.list, { height: height }]}
+        contentContainerStyle={[{ height: height }]}
+        style={globalStyle.list}
       >
         {Object.keys(messages).map((m, index) => {
           return (

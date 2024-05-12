@@ -68,7 +68,7 @@ MIDDLEWARE = [
 ]
 
 
-ALLOWED_HOSTS= ['192.168.1.22', '127.0.0.1']
+ALLOWED_HOSTS= ['192.168.1.26', '127.0.0.1']
 ROOT_URLCONF = 'score_management.urls'
 
 TEMPLATES = [

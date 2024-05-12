@@ -1,11 +1,12 @@
 import axios from "axios";
 
-const baseUrl = "http://192.168.1.22:8000/";
+const baseUrl = "http://192.168.1.26:8000/";
 
 const endpoint = {
   auth: "/o/token/",
   userInfor: "/users/self/",
   userPublicInfor: (id) => `/users/${id}/public/`,
+  userPublicInforList: (q) => `/users/public/list?q=${q}`,
 };
 
 const apis = (accessToken) => {
