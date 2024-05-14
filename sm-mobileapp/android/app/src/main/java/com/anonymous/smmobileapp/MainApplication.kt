@@ -1,4 +1,4 @@
-package com.smmobileapp
+package com.anonymous.smmobileapp
 
 import android.app.Application
 import android.content.res.Configuration
