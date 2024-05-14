@@ -58,6 +58,7 @@ class MainApplication : Application(), ReactApplication {
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }
 
+
   override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
     ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig)

@@ -152,3 +152,8 @@ class ForumAnswer(BaseModel):
         return self.content
 
 
+
+class ChatKey(models.Model):
+    key = models.CharField(max_length=255, null=False)
+    sender = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name='sent_messages')
+    receiver = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name='received_messages')

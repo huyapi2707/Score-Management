@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'django_seed',
-    'oauth2_provider'
+    'oauth2_provider',
+
 ]
 
 REST_FRAMEWORK = {
@@ -67,8 +68,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
+
+ALLOWED_HOSTS= ['192.168.1.26', '127.0.0.1']
 ROOT_URLCONF = 'score_management.urls'
 
 TEMPLATES = [
@@ -156,7 +160,7 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 
-#Mail
+# Mail
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -169,3 +173,5 @@ DEFAULT_FROM_EMAIL = 'dangdinhhuyisme@gmail.com'
 CLIENT_ID = 'faXzxqg0l3x7DXoBa0PPqdRcMqXhDTp0dF7fRDis'
 CLIENT_SECRECT = 'SS4qIRBz64rBkhqvuZlUW5y0FphdNJsQcTvglajP7zkrAppuZMoqGY2MqKO1WycgGgAmMXGf1hJ4K2I2pjcbqXBQfCtF3eSTmPJlLiy1tZB23Ci0sWYTmskXNPDuOAXA'
 
+CLIENT_ID = 'EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU'
+CLIENT_SECRECT = 'q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol'

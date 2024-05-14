@@ -5,6 +5,8 @@ from rest_framework.response import Response
 
 from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse
 from api import serializers, utils, perms
+from rest_framework import permissions as builtin_permission
+from api import paginators
 
 
 class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -37,8 +39,8 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
         result = utils.statistic_score_by_course_id(pk)
         return Response(result, status=status.HTTP_200_OK)
 
-    @action(methods=['get'], url_path='scores', detail=True)
-    def get_course_with_student_score(self, request, pk):
+    @action(methods=['get'], url_path='all_scores', detail=True)
+    def get_course_with_all_student_score(self, request, pk):
         query = utils.get_scores_data_by_course_id(pk)
         return Response(serializers.CourseWithStudentScoresSerializer(query).data, status=status.HTTP_200_OK)
 
@@ -93,5 +95,38 @@ class ForumAnswerViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.Upd
     serializer_class = serializers.ForumAnswerSerializer
     permission_classes = [perms.AnswerOwner]
 
+
+class UserViewSet(viewsets.ViewSet, generics.ListAPIView):
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = serializers.UserSerializer
+    pagination_class = paginators.UserPaginator
+    permission_classes = [builtin_permission.IsAuthenticated]
+
+    @action(methods=['get'], url_path='self', detail=False)
+    def get_self_information(self, request):
+        user = request.user
+        return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], url_path="public", detail=True)
+    def get_public_data(self, request, pk):
+        user = User.objects.get(pk=pk)
+        return Response(serializers.UserPublicInforSerializer(user).data, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], url_path="public/list", detail=False)
+    def get_public_data_list(self, request):
+        q = request.query_params.get("q")
+
+        users = None
+        if q:
+
+            users = User.objects.filter(username__icontains=q).filter(is_active=True)
+        else:
+            users = User.objects.filter().filter(is_active=True)
+        paginator = paginators.UserPaginator()
+        serializer = serializers.UserPublicInforSerializer
+        paginated_data = paginator.paginate_queryset(users, request)
+        if paginated_data is not None:
+            return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
+        return Response(serializer(users, many=True).data, status=status.HTTP_200_OK)
 
 

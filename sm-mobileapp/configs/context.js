@@ -1,6 +1,16 @@
 import { createContext } from "react";
 import theme from "./theme";
+import { firebase } from "@react-native-firebase/database";
 const GlobalStoreContext = createContext(null);
+const AuthenticationContext = createContext(null);
+const authenticationReducer = (currentState, action) => {
+  switch (action.type) {
+    case "LOGIN":
+      return action.payload;
+    case "LOGOUT":
+      return null;
+  }
+};
 
 const globalStoreReducer = (currentState, action) => {
   switch (action.type) {
@@ -58,4 +68,22 @@ const globalStoreReducer = (currentState, action) => {
   }
 };
 
-export { GlobalStoreContext, globalStoreReducer };
+const clientId = "EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU";
+const clientSecret =
+  "q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol";
+
+const firebaseDatabase = firebase
+  .app()
+  .database(
+    "https://lms-chats-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  );
+
+export {
+  GlobalStoreContext,
+  globalStoreReducer,
+  clientId,
+  clientSecret,
+  AuthenticationContext,
+  authenticationReducer,
+  firebaseDatabase,
+};
