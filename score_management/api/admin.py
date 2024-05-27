@@ -147,23 +147,23 @@ class ConfigurationAdmin(admin.ModelAdmin):
         return False
 
 
-class MessageForm(forms.Form):
-    users = User.objects.filter(is_active=True).exclude(username='admin')
-    CHOICES = [(u.id, u.username) for u in users]
-    CHOICES.insert(0, (-1, "All"))
-    CHOICES = tuple(CHOICES)
-    message = forms.CharField(widget=forms.Textarea, label="Write new message:")
-    user = forms.ChoiceField(choices=CHOICES, label="Select user:")
+# class MessageForm(forms.Form):
+#     users = User.objects.filter(is_active=True).exclude(username='admin')
+#     CHOICES = [(u.id, u.username) for u in users]
+#     CHOICES.insert(0, (-1, "All"))
+#     CHOICES = tuple(CHOICES)
+#     message = forms.CharField(widget=forms.Textarea, label="Write new message:")
+#     user = forms.ChoiceField(choices=CHOICES, label="Select user:")
 
 
 class ScoreManagementAdminSite(admin.AdminSite):
     site_header = "Score management administrator"
 
-    def get_urls(self):
-        return [
-            path('course-statistic', self.admin_view(self.course_stat_view), name='Course statistic'),
-            path('send_messages', self.admin_view(self.send_message_view), name='Send messages')
-        ] + super().get_urls()
+    # def get_urls(self):
+    #     return [
+    #         path('course-statistic', self.admin_view(self.course_stat_view), name='Course statistic'),
+    #         path('send_messages', self.admin_view(self.send_message_view), name='Send messages')
+    #     ] + super().get_urls()
 
     def course_stat_view(self, request):
         course_list = Course.objects.values('id', 'name').filter(is_active=True)
@@ -178,34 +178,34 @@ class ScoreManagementAdminSite(admin.AdminSite):
 
         return TemplateResponse(request, 'admin/course_statistic.html', context)
 
-    def send_message_view(self, request):
-        form = None
-        if request.method == "POST":
-            form = MessageForm(request.POST)
-            if form.is_valid():
-                message = form.cleaned_data.get("message")
-                user_id = int(form.cleaned_data.get("user"))
-                if user_id == -1:
-                    data = {
-                        'message': message,
-                        'timestamp': datetime.now().timestamp() * 1000
-                    }
-
-                    firebase_database.child("announcements").push(data)
-
-                else:
-                    utils.send_message(sender_id=request.user.id, receiver_id=user_id, message=message)
-
-
-
-        elif request.method == "GET":
-            form = MessageForm()
-        context = dict(
-            self.each_context(request),
-            form=form,
-
-        )
-        return TemplateResponse(request, 'admin/send_message.html', context)
+    # def send_message_view(self, request):
+    #     form = None
+    #     if request.method == "POST":
+    #         form = MessageForm(request.POST)
+    #         if form.is_valid():
+    #             message = form.cleaned_data.get("message")
+    #             user_id = int(form.cleaned_data.get("user"))
+    #             if user_id == -1:
+    #                 data = {
+    #                     'message': message,
+    #                     'timestamp': datetime.now().timestamp() * 1000
+    #                 }
+    #
+    #                 firebase_database.child("announcements").push(data)
+    #
+    #             else:
+    #                 utils.send_message(sender_id=request.user.id, receiver_id=user_id, message=message)
+    #
+    #
+    #
+    #     elif request.method == "GET":
+    #         form = MessageForm()
+    #     context = dict(
+    #         self.each_context(request),
+    #         form=form,
+    #
+    #     )
+    #     return TemplateResponse(request, 'admin/send_message.html', context)
 
     def get_app_list(self, request, app_label=None):
         app_list = super().get_app_list(request)

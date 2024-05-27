@@ -68,10 +68,12 @@ const globalStoreReducer = (currentState, action) => {
   }
 };
 
-const clientId = "EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU";
-const clientSecret =
-  "q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol";
-
+// const clientId = "EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU";
+// const clientSecret =
+//   "q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol";
+const clientId = "hbfM6kC0UwNTx7vb6fNB0Hr9MfS23Hfw4ASmBclJ";
+const clientSecret = "mLTo8PeuHtYUv52PplyeqI98ErtH8Rm6v2A9GO76UoOA0ZVqdYWeX9EJN53OoumTNEO0NImejkPk3uLu5JswQcaGbFJC49UIbpPRXEJo4UUPbiA90ojRo3z0WGeyca29";
+  
 const firebaseDatabase = firebase
   .app()
   .database(

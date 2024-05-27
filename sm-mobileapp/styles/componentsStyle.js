@@ -47,6 +47,28 @@ const componentsStyles = StyleSheet.create({
   messageAvatarLeft: {
     marginTop: 5,
   },
+  userInfo: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: 10,
+  },
+  userAvatar: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    borderWidth: 5,
+    borderColor: "rgba(240,248,255,1)",
+  },
+  userName: {
+    marginLeft: 10,
+  },
+  listCourse: {
+    borderRadius: 57.5,
+    borderWidth: 5,
+    borderColor: "rgba(240,248,255,1)",
+  }
+
 });
 
 export default componentsStyles;

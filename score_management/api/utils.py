@@ -1,13 +1,27 @@
 import json
 
 from api.firebase import firebase_database
-from api.models import Course, User, ChatKey
+from api.models import Course, User, ChatKey, Lecturer
 from django.db import connection
 from datetime import datetime
-
+from django.contrib.auth.models import Permission
 
 def get_scores_data_by_course_id(id):
     try:
+        result = (Course.objects
+                  .prefetch_related("students__student")
+                  .prefetch_related("students__scores")
+                  .prefetch_related("students__scores__score_column").get(pk=id))
+
+        return result
+    except Exception as e:
+        print(e)
+        return None
+
+def get_scores_data_by_course_by_lecturer_id(id):
+    lecturer = Permission.objects.get(codename='lecturer')
+    try:
+
         result = (Course.objects
                   .prefetch_related("students__student")
                   .prefetch_related("students__scores")
