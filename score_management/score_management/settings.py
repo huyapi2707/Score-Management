@@ -59,6 +59,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser'
     )
+
 }
 
 MIDDLEWARE = [
