@@ -6,6 +6,15 @@ from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScor
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
 
+
+    def create(self, validated_data):
+        data = validated_data.copy()
+        user = User(**data)
+        user.set_password(user.password)
+        user.save()
+
+
+
     def get_role(self, instance):
 
         if instance.has_perm('api.lecturer'):

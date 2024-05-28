@@ -9,6 +9,11 @@ const authenticationReducer = (currentState, action) => {
       return action.payload;
     case "LOGOUT":
       return null;
+    case "SET_AVARTAR":
+      return {
+        ...currentState,
+        avatar: action["payload"],
+      };
   }
 };
 

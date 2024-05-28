@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-7+!vi6b(b1$0tq-((8-rg0fz78k66scafjduk#=4m_44k(q!i$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 AUTH_USER_MODEL = "api.User"
 
@@ -53,7 +53,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser'
     )
+
 }
 
 MIDDLEWARE = [
@@ -67,8 +73,7 @@ MIDDLEWARE = [
 
 ]
 
-
-ALLOWED_HOSTS= ['192.168.1.26', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.11', '127.0.0.1']
 ROOT_URLCONF = 'score_management.urls'
 
 TEMPLATES = [
@@ -152,7 +157,6 @@ cloudinary.config(
     api_secret="8jP48b2XeCzhNdKNe9yGIwiDiN8"
 )
 CKEDITOR_UPLOAD_PATH = "scoreManagement/images"
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Mail
 
