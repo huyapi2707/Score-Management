@@ -1,4 +1,4 @@
-rootProject.name = 'smmobileapp'
+rootProject.name = 'sm-mobileapp'
 
 dependencyResolutionManagement {
   versionCatalogs {

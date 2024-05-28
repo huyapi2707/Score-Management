@@ -10,10 +10,10 @@ from django.urls import reverse, path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from api import utils
-from api.models import User, Subject, Course, StudentJoinCourse, Configuration, Student, Lecturer, ScoreColumn
+from api.models import User, Subject, Course, StudentJoinCourse, Configuration, Student, Lecturer, ScoreColumn, Forum, ForumAnswer
 from api.firebase import firebase_database
-
 # Register your models here.
 
 
@@ -236,8 +236,29 @@ class ScoreColumnAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'percentage', 'course']
 
 
-admin_site = ScoreManagementAdminSite(name="Score Management")
+class ForumForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget)
+    class Meta:
+        model = Forum
+        fields = ['id','title','content','creator','course']
 
+class ForumAdmin(admin.ModelAdmin):
+    form = ForumForm
+    list_display = ['id', 'title', 'created_at',]
+
+class ForumAnswerAdmin(admin.ModelAdmin):
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs['form'] = ForumForm
+        return super().get_form(request, obj, **kwargs)
+
+class ForumForm(forms.ModelForm):
+    class Meta:
+        model = ForumAnswer
+        fields = ['id', 'content', 'owner', 'forum']
+
+
+
+admin_site = ScoreManagementAdminSite(name="Score Management")
 admin_site.register(User, UserAdmin)
 admin_site.register(Subject, SubjectAdmin)
 admin_site.register(Course, CourseAdmin)
@@ -245,3 +266,5 @@ admin_site.register(Configuration, ConfigurationAdmin)
 admin_site.register(Student, StudentAdmin)
 admin_site.register(Lecturer, LecturerAdmin)
 admin_site.register(ScoreColumn, ScoreColumnAdmin)
+admin_site.register(Forum,ForumAdmin)
+admin_site.register(ForumAnswer,ForumAnswerAdmin)

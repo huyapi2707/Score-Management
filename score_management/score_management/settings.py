@@ -26,6 +26,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+import pymysql
+
+pymysql.install_as_MySQLdb()
+
 AUTH_USER_MODEL = "api.User"
 
 # Application definition
@@ -97,8 +101,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'score_management_db',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
+        'USER': 'root',
+        'PASSWORD': 'Admin@123',
 
     }
 }
@@ -154,6 +158,8 @@ cloudinary.config(
 CKEDITOR_UPLOAD_PATH = "scoreManagement/images"
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+
+
 # Mail
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -163,6 +169,9 @@ EMAIL_HOST_PASSWORD = 'kggq xlce prbq luvi'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'dangdinhhuyisme@gmail.com'
+
+CLIENT_ID = 'faXzxqg0l3x7DXoBa0PPqdRcMqXhDTp0dF7fRDis'
+CLIENT_SECRECT = 'SS4qIRBz64rBkhqvuZlUW5y0FphdNJsQcTvglajP7zkrAppuZMoqGY2MqKO1WycgGgAmMXGf1hJ4K2I2pjcbqXBQfCtF3eSTmPJlLiy1tZB23Ci0sWYTmskXNPDuOAXA'
 
 CLIENT_ID = 'EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU'
 CLIENT_SECRECT = 'q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol'
