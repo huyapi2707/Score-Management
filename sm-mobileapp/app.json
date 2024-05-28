@@ -7,13 +7,8 @@
     "name": "sm-mobileapp",
     "slug": "sm-mobileapp",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "android": {
-      "package": "com.anonymous.smmobileapp"
-    }
-
+    "assetBundlePatterns": ["**/*"],
+    "plugin": ["@react-native-firebase/app", "@react-native-firebase/database"]
   },
   "name": "sm-mobileapp"
 }
