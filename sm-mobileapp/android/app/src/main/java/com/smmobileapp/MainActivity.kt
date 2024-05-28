@@ -1,4 +1,4 @@
-package com.anonymous.smmobileapp
+package com.smmobileapp
 
 import android.os.Build
 import android.os.Bundle
