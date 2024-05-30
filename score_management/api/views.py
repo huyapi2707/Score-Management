@@ -2,8 +2,8 @@ from rest_framework import viewsets, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions as builtin_permission
-from api.models import Course, User
-from api import serializers, utils, permissions
+from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer
+from api import serializers, utils, permissions, perms
 from api import paginators
 from api import permissions
 
@@ -14,6 +14,20 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
 
     # permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action.__eq__('list'):
+            course_name = self.request.query_params.get('name')
+            subject_name = self.request.query_params.get('subject_name')
+
+            if course_name:
+                queryset = queryset.filter(name__icontains=course_name)
+            if subject_name:
+                queryset = queryset.filter(subject__name__icontains=subject_name)
+
+        return queryset
+
     @action(methods=['get'], url_path='score_statistic', detail=True)
     def get_score_statistic(self, request, pk):
         result = utils.statistic_score_by_course_id(pk)
@@ -23,6 +37,25 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
     def get_course_with_all_student_score(self, request, pk):
         query = utils.get_scores_data_by_course_id(pk)
         return Response(serializers.CourseWithStudentScoresSerializer(query).data, status=status.HTTP_200_OK)
+
+        ##   Giảng viên xem danh sách các lớp học mà mình giảng dạy.
+
+    @action(methods=['get'], detail=True, url_path='lecturer_courses')
+    def get_courses_by_lecturer(self, request, pk=None):
+        try:
+            lecturer = Lecturer.objects.get(pk=pk)
+            courses = Course.objects.filter(lecturer=lecturer)
+
+            course_name = self.request.query_params.get('name')
+            subject_name = self.request.query_params.get('subject_name')
+            if course_name:
+                courses = courses.filter(name__icontains=course_name)
+            if subject_name:
+                courses = courses.filter(subject__name__icontains=subject_name)
+
+            return Response(serializers.CourseSerializer(courses, many=True).data, status=status.HTTP_200_OK)
+        except Lecturer.DoesNotExist:
+            return Response({"error": "Lecturer not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.ListCreateAPIView):
@@ -69,3 +102,24 @@ class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.Lis
             if paginated_data is not None:
                 return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
             return Response(serializer(users, many=True).data, status=status.HTTP_200_OK)
+
+class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+    queryset = Forum.objects.filter(is_active=True)
+    serializer_class = serializers.ForumSerializer
+    def get_permissions(self):
+        if self.action in ['add_forum_answer']:
+            return [permissions.IsAuthenticated()]
+
+        return [permissions.AllowAny()]
+
+    @action(methods=['post'], url_path='forum-answer', detail=True)
+    def add_forum_answer(self, request, pk):
+        f = self.get_object().forumanswer_set.create(content=request.data.get('content'),
+                                                 owner=request.user)
+        return Response(serializers.ForumAnswerSerializer(f).data, status=status.HTTP_201_CREATED)
+
+
+class ForumAnswerViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
+    queryset = ForumAnswer.objects.all()
+    serializer_class = serializers.ForumAnswerSerializer
+    permission_classes = [perms.AnswerOwner]

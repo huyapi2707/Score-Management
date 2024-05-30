@@ -62,4 +62,7 @@ export default StyleSheet.create({
   listItemSpace: {
     marginBottom: 10,
   },
+  margin: {
+    margin: 10
+  },
 });
