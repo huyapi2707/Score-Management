@@ -6,6 +6,7 @@ import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Home from "./screens/Home";
 import Chat from "./components/Chat";
+import CourseDetail from './components/CourseDetail';
 import {
   PaperProvider,
   Dialog,
@@ -112,6 +113,7 @@ export default function App() {
                   <>
                     <MainStack.Screen name="home" component={Home} />
                     <MainStack.Screen name="chat" component={Chat} />
+                    <MainStack.Screen name="coursedetail" component={CourseDetail} />
                   </>
                 ) : (
                   <>

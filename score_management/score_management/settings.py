@@ -73,7 +73,8 @@ MIDDLEWARE = [
 
 ]
 
-ALLOWED_HOSTS = ['192.168.1.11', '127.0.0.1']
+# ALLOWED_HOSTS = ['192.168.1.11', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.2', '127.0.0.1']
 ROOT_URLCONF = 'score_management.urls'
 
 TEMPLATES = [
@@ -102,8 +103,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'score_management_db',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
+        'USER': 'root',
+        'PASSWORD': 'Admin@123',
 
     }
 }
@@ -168,5 +169,8 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'dangdinhhuyisme@gmail.com'
 
-CLIENT_ID = 'EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU'
-CLIENT_SECRECT = 'q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol'
+# CLIENT_ID = 'EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU'
+# CLIENT_SECRECT = 'q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol'
+
+CLIENT_ID = "m6X5b284y5UwnS2onuK7K6y00WLGTOzMPcpyK4BW";
+CLIENT_SECRECT = "qkIaLIsMh1W1Y3fvndEGJfpIgYBh09nm5SOHsFfRa5nQA3343OaRQkfGMSKqDuguALSi1QdI4CcwMyQkATFbtMIJg6TBuAYGdJhHpPsfGEDMRArFrJGlD1P8K8aln9IQ";
