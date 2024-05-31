@@ -1,6 +1,8 @@
 from django.db.models import  Sum, F
 from rest_framework import serializers
-from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, ChatKey
+from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, Forum, ForumAnswer,ChatKey
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django import forms
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -116,3 +118,25 @@ class CourseWithStudentScoresSerializer(CourseSerializer):
     class Meta:
         model = CourseSerializer.Meta.model
         fields = CourseSerializer.Meta.fields + ['students', 'total_student']
+
+class ForumForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget)
+    class Meta:
+        model = Forum
+        fields = ['id','title','content','creator','course']
+
+class ForumSerializer(serializers.ModelSerializer):
+    form = ForumForm
+    creator = UserSerializer()
+    course = CourseSerializer()
+    class Meta:
+        model = Forum
+        fields = ['id', 'title', 'content','creator','course', 'created_at']
+
+
+
+class ForumAnswerSerializer(serializers.ModelSerializer):
+    owner = UserSerializer()
+    class Meta:
+        model = ForumAnswer
+        fields = ['id', 'content', 'owner', 'created_at']

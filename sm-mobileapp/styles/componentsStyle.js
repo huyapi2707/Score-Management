@@ -47,6 +47,11 @@ const componentsStyles = StyleSheet.create({
   messageAvatarLeft: {
     marginTop: 5,
   },
+  listCourse: {
+    borderRadius: 57.5,
+    borderWidth: 5,
+    borderColor: "rgba(240,248,255,1)",
+  },
 });
 
 export default componentsStyles;

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://192.168.1.11:8000";
+const baseUrl = "http://192.168.1.2:8000";
 
 const endpoint = {
   auth: "/o/token/",
@@ -8,6 +8,8 @@ const endpoint = {
   userPublicInfor: (id) => `/users/${id}/public/`,
   userPublicInforList: (q) => `/users/public/list?q=${q}`,
   user: (id) => `/users/${id}/`,
+  coursesLecturer: (courseId) => `/courses/${courseId}/lecturer_courses/`,
+  courseDetail: (courseId) => `/courses/${courseId}/all_scores/`,
 };
 
 const apis = (accessToken) => {

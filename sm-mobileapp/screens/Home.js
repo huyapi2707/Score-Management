@@ -55,7 +55,7 @@ const Home = ({ navigation }) => {
           />
         );
       case "courses":
-        return <Courses jumpTo={jumpTo} />;
+        return <Courses navigation={navigation} jumpTo={jumpTo} />;
     }
   };
 
