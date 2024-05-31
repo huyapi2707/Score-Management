@@ -38,9 +38,6 @@ class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.Lis
 
             return [builtin_permission.IsAuthenticated(), ]
 
-
-
-
         @action(methods=['get'], url_path='self', detail=False)
         def get_self_information(self, request):
             user = request.user
