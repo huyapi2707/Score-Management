@@ -2,7 +2,7 @@ from rest_framework import viewsets, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions as builtin_permission
-from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer
+from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer, Student
 from api import serializers, utils, permissions, perms
 from api import paginators
 from api import permissions
@@ -12,7 +12,7 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
     queryset = Course.objects.filter(is_active=True)
     serializer_class = serializers.CourseSerializer
 
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [builtin_permission.IsAuthenticated]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -27,6 +27,19 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
                 queryset = queryset.filter(subject__name__icontains=subject_name)
 
         return queryset
+
+
+    @action(methods=["get"], url_path='score', detail=True)
+    def get_score(self, request, pk):
+        score_set = self.get_object().students.all()
+
+        paginator = paginators.StudentScorePaginator()
+        paginated_result = paginator.paginate_queryset(score_set, request)
+        if paginated_result is not None:
+            serializered_result = serializers.StudentScoreDetailsSerializer(paginated_result, many=True)
+            return paginator.get_paginated_response(serializered_result.data)
+        return Response(serializers.StudentScoreDetailsSerializer(score_set, many=True).data, status.HTTP_200_OK)
+
 
     @action(methods=['get'], url_path='score_statistic', detail=True)
     def get_score_statistic(self, request, pk):
@@ -70,9 +83,6 @@ class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.Lis
                 return [builtin_permission.AllowAny(), ]
 
             return [builtin_permission.IsAuthenticated(), ]
-
-
-
 
         @action(methods=['get'], url_path='self', detail=False)
         def get_self_information(self, request):
@@ -123,3 +133,4 @@ class ForumAnswerViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.Upd
     queryset = ForumAnswer.objects.all()
     serializer_class = serializers.ForumAnswerSerializer
     permission_classes = [perms.AnswerOwner]
+

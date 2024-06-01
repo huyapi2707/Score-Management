@@ -7,17 +7,21 @@ import { AuthenticationContext } from "../configs/context";
 import { apis, endpoint } from "../configs/apis.js";
 import moment from "moment";
 import "moment/locale/vi";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Courses = ({ navigation }) => {
   const { user } = useContext(AuthenticationContext);
   const [lecturerCourses, setLecturerCourses] = useState(null);
   const [loading, setLoading] = useState(false);
   const lecturerId = user.id;
-  const accessToken = user.accessToken;
-  const [searchCourse, setSearchCourse] = useState('');
+
+  const [searchCourse, setSearchCourse] = useState("");
 
   const loadLecturerCourses = async () => {
-    let url = `${endpoint.coursesLecturer(lecturerId)}?name=${searchCourse}&subject_name=${searchCourse}`;
+    const accessToken = await AsyncStorage.getItem("accessToken");
+    let url = `${endpoint.coursesLecturer(
+      lecturerId
+    )}?name=${searchCourse}&subject_name=${searchCourse}`;
     try {
       setLoading(true);
       const res = await apis(accessToken).get(url);
@@ -61,7 +65,9 @@ const Courses = ({ navigation }) => {
                   }
                 >
                   <List.Item
-                    title={`${course.name + " - " + course.subject.name.toUpperCase()}`}
+                    title={`${
+                      course.name + " - " + course.subject.name.toUpperCase()
+                    }`}
                     description={moment(course.created_date).fromNow()}
                     left={(props) => (
                       <List.Icon {...props} icon="google-classroom" />
