@@ -72,6 +72,8 @@ class ScoreColumnSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'percentage']
 
 
+
+
 class CourseSerializer(serializers.ModelSerializer):
     lecturer = UserSerializer()
     subject = SubjectSerializer()

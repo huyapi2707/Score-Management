@@ -63,6 +63,9 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   margin: {
-    margin: 10
+    margin: 10,
+  },
+  textCamel: {
+    textTransform: "capitalize",
   },
 });
