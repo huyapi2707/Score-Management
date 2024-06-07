@@ -1,41 +1,52 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, ActivityIndicator, TouchableOpacity } from "react-native";
-import { List, Text, Searchbar } from "react-native-paper";
+import { View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, Searchbar, List } from "react-native-paper";
 import componentsStyles from "../styles/componentsStyle";
 import globalStyle from "../styles/globalStyle";
-import { AuthenticationContext } from "../configs/context";
+import { GlobalStoreContext } from "../configs/context";
 import { apis, endpoint } from "../configs/apis.js";
 import moment from "moment";
 import "moment/locale/vi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as action from "../configs/actions.js";
+import * as utils from "../configs/utils.js";
 const Courses = ({ navigation }) => {
-  const { user } = useContext(AuthenticationContext);
-  const [lecturerCourses, setLecturerCourses] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const lecturerId = user.id;
-
-  const [searchCourse, setSearchCourse] = useState("");
-
-  const loadLecturerCourses = async () => {
+  const globalStoreDispatcher = useContext(GlobalStoreContext);
+  const [courses, setCourses] = useState([]);
+  const [kw, setKw] = useState("");
+  const [page, setPage] = useState(1);
+  const loadCourse = async () => {
+    if (page < 1) {
+      return;
+    }
     const accessToken = await AsyncStorage.getItem("accessToken");
-    let url = `${endpoint.coursesLecturer(
-      lecturerId
-    )}?name=${searchCourse}&subject_name=${searchCourse}`;
+
     try {
-      setLoading(true);
-      const res = await apis(accessToken).get(url);
-      setLecturerCourses(res.data);
+      globalStoreDispatcher(action.turnOnIndicator());
+
+      const res = await apis(accessToken).get(
+        endpoint["userCourses"] + `?kw=${kw}&page=${page}`
+      );
+      if (res["data"]["next"] === null) {
+        setPage(-1);
+      }
+      setCourses((courses) => [...courses, ...res["data"]["results"]]);
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      globalStoreDispatcher(action.turnOffIndicator());
+    }
+  };
+
+  const handleLoadMore = ({ nativeEvent }) => {
+    if (utils.isCloseToBottom(nativeEvent) && page > 0) {
+      setPage((page) => page + 1);
     }
   };
 
   useEffect(() => {
-    loadLecturerCourses();
-  }, [searchCourse, lecturerId]);
+    loadCourse();
+  }, [kw]);
 
   return (
     <View style={globalStyle.container}>
@@ -46,40 +57,37 @@ const Courses = ({ navigation }) => {
       <View style={globalStyle.margin}>
         <Searchbar
           placeholder="Search"
-          value={searchCourse}
-          onChangeText={(t) => setSearchCourse(t)}
+          value={kw}
+          onChangeText={(value) => {
+            setKw(value);
+            setPage(1);
+          }}
         />
       </View>
 
-      <View style={globalStyle.margin}>
-        {loading ? (
-          <ActivityIndicator />
-        ) : (
-          lecturerCourses && (
-            <List.Section>
-              {lecturerCourses.map((course) => (
-                <TouchableOpacity
-                  key={course.id}
-                  onPress={() =>
-                    navigation.navigate("coursedetail", { courseId: course.id })
-                  }
-                >
-                  <List.Item
-                    title={`${
-                      course.name + " - " + course.subject.name.toUpperCase()
-                    }`}
-                    description={moment(course.created_date).fromNow()}
-                    left={(props) => (
-                      <List.Icon {...props} icon="google-classroom" />
-                    )}
-                    style={componentsStyles.listCourse}
-                  />
-                </TouchableOpacity>
-              ))}
-            </List.Section>
-          )
-        )}
-      </View>
+      <ScrollView onScroll={handleLoadMore} style={globalStyle.margin}>
+        <List.Section>
+          {courses.map((course) => (
+            <TouchableOpacity
+              key={course.id}
+              onPress={() =>
+                navigation.navigate("coursedetail", { course: course })
+              }
+            >
+              <List.Item
+                title={`${
+                  course.name + " - " + course.subject.name.toUpperCase()
+                }`}
+                description={moment(course.created_date).fromNow()}
+                left={(props) => (
+                  <List.Icon {...props} icon="google-classroom" />
+                )}
+                style={componentsStyles.listCourse}
+              />
+            </TouchableOpacity>
+          ))}
+        </List.Section>
+      </ScrollView>
     </View>
   );
 };

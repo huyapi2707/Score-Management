@@ -41,6 +41,7 @@ class User(AbstractUser):
 
 class Student(User):
 
+
     class Meta:
         permissions = student_permission
 

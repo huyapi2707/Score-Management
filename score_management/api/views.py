@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from rest_framework import viewsets, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -28,7 +29,6 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
 
         return queryset
 
-
     @action(methods=["get"], url_path='score', detail=True)
     def get_score(self, request, pk):
         score_set = self.get_object().students.all()
@@ -39,7 +39,6 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
             serializered_result = serializers.StudentScoreDetailsSerializer(paginated_result, many=True)
             return paginator.get_paginated_response(serializered_result.data)
         return Response(serializers.StudentScoreDetailsSerializer(score_set, many=True).data, status.HTTP_200_OK)
-
 
     @action(methods=['get'], url_path='score_statistic', detail=True)
     def get_score_statistic(self, request, pk):
@@ -72,50 +71,77 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
 
 
 class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.ListCreateAPIView):
-        queryset = User.objects.filter(is_active=True)
-        serializer_class = serializers.UserSerializer
-        pagination_class = paginators.UserPaginator
-        def get_permissions(self):
-            if self.action in ['partial_update']:
-                return [permissions.UserOwnerPermission(), ]
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = serializers.UserSerializer
+    pagination_class = paginators.UserPaginator
 
-            elif self.action in ['users_create']:
-                return [builtin_permission.AllowAny(), ]
+    def get_permissions(self):
+        if self.action in ['partial_update']:
+            return [permissions.UserOwnerPermission(), ]
 
-            return [builtin_permission.IsAuthenticated(), ]
+        elif self.action in ['users_create']:
+            return [builtin_permission.AllowAny(), ]
 
-        @action(methods=['get'], url_path='self', detail=False)
-        def get_self_information(self, request):
-            user = request.user
-            return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+        return [builtin_permission.IsAuthenticated(), ]
 
-
-        @action(methods=["get"], url_path="public", detail=True)
-        def get_public_data(self, request, pk):
-            user = User.objects.get(pk=pk)
-            return Response(serializers.UserPublicInforSerializer(user).data, status=status.HTTP_200_OK)
-
-
-        @action(methods=["get"], url_path="public/list", detail=False)
-        def get_public_data_list(self, request):
-            q = request.query_params.get("q")
-
-            users = None
-            if q:
-
-                users = User.objects.filter(username__icontains=q).filter(is_active=True)
+    @action(methods=['get'], url_path="courses", detail=False)
+    def get_course(self, request):
+        user = request.user
+        serializer = serializers.CourseSerializer
+        paginator = paginators.CoursePaginator()
+        courses = None
+        kw = request.query_params.get("kw")
+        if user.has_perm("api.lecturer"):
+            user = Lecturer.objects.get(pk=user.id)
+            if kw and not kw.__eq__(""):
+                courses = user.teaching_courses.filter(name__icontains=kw)
             else:
-                users = User.objects.filter().filter(is_active=True)
-            paginator = paginators.UserPaginator()
-            serializer = serializers.UserPublicInforSerializer
-            paginated_data = paginator.paginate_queryset(users, request)
-            if paginated_data is not None:
-                return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
-            return Response(serializer(users, many=True).data, status=status.HTTP_200_OK)
+                courses = user.teaching_courses.all().order_by("id")
+        if user.has_perm("api.student"):
+            user = Student.objects.get(pk=user.id)
+            if kw and not kw.__eq__(""):
+                courses = Course.objects.filter(students__student_id=user.id).filter(name__icontains=kw)
+
+            else:
+                courses = Course.objects.filter(students__student_id=user.id)
+
+        paginated_data = paginator.paginate_queryset(courses, request)
+        if paginated_data is not None:
+            return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
+        return Response(serializer(courses, many=True).data, status.HTTP_200_OK)
+
+    @action(methods=['get'], url_path='self', detail=False)
+    def get_self_information(self, request):
+        user = request.user
+        return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], url_path="public", detail=True)
+    def get_public_data(self, request, pk):
+        user = User.objects.get(pk=pk)
+        return Response(serializers.UserPublicInforSerializer(user).data, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], url_path="public/list", detail=False)
+    def get_public_data_list(self, request):
+        q = request.query_params.get("q")
+
+        users = None
+        if q:
+
+            users = User.objects.filter(username__icontains=q).filter(is_active=True)
+        else:
+            users = User.objects.filter().filter(is_active=True)
+        paginator = paginators.UserPaginator()
+        serializer = serializers.UserPublicInforSerializer
+        paginated_data = paginator.paginate_queryset(users, request)
+        if paginated_data is not None:
+            return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
+        return Response(serializer(users, many=True).data, status=status.HTTP_200_OK)
+
 
 class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Forum.objects.filter(is_active=True)
     serializer_class = serializers.ForumSerializer
+
     def get_permissions(self):
         if self.action in ['add_forum_answer']:
             return [permissions.IsAuthenticated()]
@@ -125,7 +151,7 @@ class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     @action(methods=['post'], url_path='forum-answer', detail=True)
     def add_forum_answer(self, request, pk):
         f = self.get_object().forumanswer_set.create(content=request.data.get('content'),
-                                                 owner=request.user)
+                                                     owner=request.user)
         return Response(serializers.ForumAnswerSerializer(f).data, status=status.HTTP_201_CREATED)
 
 
@@ -133,4 +159,3 @@ class ForumAnswerViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.Upd
     queryset = ForumAnswer.objects.all()
     serializer_class = serializers.ForumAnswerSerializer
     permission_classes = [perms.AnswerOwner]
-
