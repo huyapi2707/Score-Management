@@ -7,3 +7,7 @@ class UserPaginator(pagination.PageNumberPagination):
 
 class StudentScorePaginator(pagination.PageNumberPagination):
     page_size = 15
+
+
+class CoursePaginator(pagination.PageNumberPagination):
+    page_size = 10

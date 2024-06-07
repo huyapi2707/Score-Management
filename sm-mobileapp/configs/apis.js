@@ -5,12 +5,14 @@ const baseUrl = "http://192.168.7.103:8000";
 const endpoint = {
   auth: "/o/token/",
   userInfor: "/users/self/",
+  userCourses: "/users/courses/",
   userPublicInfor: (id) => `/users/${id}/public/`,
   userPublicInforList: (q) => `/users/public/list?q=${q}`,
   user: (id) => `/users/${id}/`,
   coursesLecturer: (courseId) => `/courses/${courseId}/lecturer_courses/`,
   courseDetail: (courseId) => `/courses/${courseId}/`,
   courseStudentScore: (courseId) => `/courses/${courseId}/score`,
+  courseStudentAllScore: (courseId) => `/courses/${courseId}/all_scores/`,
 };
 
 const apis = (accessToken) => {
