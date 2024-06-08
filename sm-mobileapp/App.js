@@ -26,6 +26,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apis, endpoint } from "./configs/apis";
+import StudentCourse from "./components/StudentCourse";
+import LecturerCourse from "./components/LecturerCourse";
 
 export default function App() {
   const [globalStore, globalStoreDispatcher] = useReducer(globalStoreReducer, {
@@ -114,8 +116,12 @@ export default function App() {
                     <MainStack.Screen name="home" component={Home} />
                     <MainStack.Screen name="chat" component={Chat} />
                     <MainStack.Screen
-                      name="coursedetail"
-                      component={CourseDetail}
+                      name="userCourse"
+                      component={
+                        user["role"] === "student"
+                          ? StudentCourse
+                          : LecturerCourse
+                      }
                     />
                   </>
                 ) : (
