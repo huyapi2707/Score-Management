@@ -13,6 +13,7 @@ const endpoint = {
   courseDetail: (courseId) => `/courses/${courseId}/`,
   courseStudentScore: (courseId) => `/courses/${courseId}/score`,
   courseStudentAllScore: (courseId) => `/courses/${courseId}/all_scores/`,
+  studentScore: (courseId) => `/users/self/student/${courseId}/score`,
 };
 
 const apis = (accessToken) => {

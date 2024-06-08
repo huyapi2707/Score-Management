@@ -109,6 +109,18 @@ class StudentScoreDetailsSerializer(serializers.ModelSerializer):
         model = StudentJoinCourse
         fields = ['student', 'scores', 'summary_score']
 
+class StudentScoreSerializer(serializers.ModelSerializer):
+    scores = ScoreDetailSerializer(many=True)
+
+    summary_score = serializers.SerializerMethodField()
+
+    def get_summary_score(self, obj):
+        return obj.scores.annotate(p=F('score') * F('score_column__percentage')).aggregate(total=Sum('p'))['total']
+
+    class Meta:
+        model = StudentJoinCourse
+        fields = ['scores', 'summary_score']
+
 
 class CourseWithStudentScoresSerializer(CourseSerializer):
     students = StudentScoreDetailsSerializer(many=True)

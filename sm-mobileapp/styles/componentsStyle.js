@@ -52,6 +52,28 @@ const componentsStyles = StyleSheet.create({
     borderWidth: 5,
     borderColor: "rgba(240,248,255,1)",
   },
+  sectionTitle: {
+    marginTop: 20,
+    backgroundColor: "#ADD8E6",
+    height: 30,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
+  },
+  scoreTableTextStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 export default componentsStyles;

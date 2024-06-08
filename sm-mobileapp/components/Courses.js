@@ -71,7 +71,7 @@ const Courses = ({ navigation }) => {
             <TouchableOpacity
               key={course.id}
               onPress={() =>
-                navigation.navigate("coursedetail", { course: course })
+                navigation.navigate("userCourse", { course: course })
               }
             >
               <List.Item

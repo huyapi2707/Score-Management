@@ -137,6 +137,19 @@ class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.Lis
             return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
         return Response(serializer(users, many=True).data, status=status.HTTP_200_OK)
 
+    @action(methods=["get"], url_path="self/student/(?P<course_id>\d*)/score", detail=False)
+    def get_seft_score(self, request, course_id):
+
+        student = request.user
+        if not student.has_perm("api.student"):
+            return Response("Not a student", status=status.HTTP_400_BAD_REQUEST)
+        query = (StudentJoinCourse.objects
+                 .filter(student=student)
+                 .filter(course_id=course_id)
+                 .first())
+        serializer = serializers.StudentScoreSerializer
+        return Response(serializer(query).data, status=status.HTTP_200_OK)
+
 
 class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Forum.objects.filter(is_active=True)

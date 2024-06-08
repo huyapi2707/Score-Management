@@ -33,7 +33,7 @@ const Profile = () => {
       let res = await ImagePicker.launchImageLibraryAsync();
       if (!res.canceled) {
         try {
-          globalStoreDispatcher(actions.turnOffIndicator());
+          globalStoreDispatcher(actions.turnOnIndicator());
           const newAvart = res.assets[0];
           const formData = new FormData();
 
