@@ -23,4 +23,10 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  fontTitle: {
+    fontWeight: "bold"
+  },
+  fontCreator: {
+    fontStyle: "italic" 
+  }
 });

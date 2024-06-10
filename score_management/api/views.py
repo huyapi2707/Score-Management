@@ -8,24 +8,25 @@ from api import serializers, utils, permissions, perms
 from api import paginators
 from api import permissions
 
-
 class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.filter(is_active=True)
     serializer_class = serializers.CourseSerializer
 
     permission_classes = [builtin_permission.IsAuthenticated]
 
+    # def get_permissions(self):
+    #     if self.action in ['get_courses_by_lecturer','post_forum']:
+    #         return [builtin_permission.IsAuthenticated()]
+    #
+    #     return [builtin_permission.AllowAny()]
     def get_queryset(self):
         queryset = self.queryset
 
         if self.action.__eq__('list'):
             course_name = self.request.query_params.get('name')
-            subject_name = self.request.query_params.get('subject_name')
 
             if course_name:
                 queryset = queryset.filter(name__icontains=course_name)
-            if subject_name:
-                queryset = queryset.filter(subject__name__icontains=subject_name)
 
         return queryset
 
@@ -59,15 +60,20 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
             courses = Course.objects.filter(lecturer=lecturer)
 
             course_name = self.request.query_params.get('name')
-            subject_name = self.request.query_params.get('subject_name')
             if course_name:
                 courses = courses.filter(name__icontains=course_name)
-            if subject_name:
-                courses = courses.filter(subject__name__icontains=subject_name)
 
             return Response(serializers.CourseSerializer(courses, many=True).data, status=status.HTTP_200_OK)
         except Lecturer.DoesNotExist:
             return Response({"error": "Lecturer not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=['post'],detail=True,url_path='create_forum')
+    def post_forum(self,request,pk):
+        courses = Course.objects.get(pk=pk)
+        f = self.get_object().forum_set.create(title=request.data.get('title'),content=request.data.get('content'),
+                                                     creator=request.user, course=courses)
+        return Response(serializers.ForumSerializer(f).data, status=status.HTTP_201_CREATED)
+
 
 
 class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.ListCreateAPIView):
@@ -159,9 +165,16 @@ class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 
     def get_permissions(self):
         if self.action in ['add_forum_answer']:
-            return [permissions.IsAuthenticated()]
+            return [builtin_permission.IsAuthenticated()]
 
-        return [permissions.AllowAny()]
+        return [builtin_permission.AllowAny()]
+
+    @action(methods=['get'], url_path='course/(?P<course_id>\d+)',url_name='list-forum', detail=False)
+    def get_list_forum(self, request, course_id):
+        course = Course.objects.get(pk=course_id)
+        forums = course.forum_set.filter(is_active=True)
+        serializer = serializers.ForumSerializer(forums, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['post'], url_path='forum-answer', detail=True)
     def add_forum_answer(self, request, pk):

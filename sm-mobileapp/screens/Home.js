@@ -6,6 +6,7 @@ import { firebase } from "@react-native-firebase/database";
 import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import { BottomNavigation } from "react-native-paper";
 import { AuthenticationContext } from "../configs/context";
+import CourseDetail from "../components/CourseDetail";
 const Home = ({ navigation }) => {
   const [index, setIndex] = useState(0);
   const routesRedecer = (currentState, action) => {
@@ -54,8 +55,10 @@ const Home = ({ navigation }) => {
             jumpTo={jumpTo}
           />
         );
-      case "courses":
-        return <Courses navigation={navigation} jumpTo={jumpTo} />;
+        case "courses":
+          return <Courses navigation={navigation} jumpTo={jumpTo} />;        
+        case "coursedetail":
+          return <CourseDetail navigation={navigation} jumpTo={jumpTo} />;      
     }
   };
 

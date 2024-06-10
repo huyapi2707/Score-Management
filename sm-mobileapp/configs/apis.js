@@ -15,6 +15,9 @@ const endpoint = {
   courseStudentScore: (courseId) => `/courses/${courseId}/score`,
   courseStudentAllScore: (courseId) => `/courses/${courseId}/all_scores/`,
   studentScore: (courseId) => `/users/self/student/${courseId}/score`,
+  courseDetail: (courseId) => `/courses/${courseId}/all_scores/`,
+  forum: (courseId) => `/courses/${courseId}/create_forum/`,
+  listForum: (courseId) => `/forums/course/${courseId}/`,
 };
 
 const apis = (accessToken) => {

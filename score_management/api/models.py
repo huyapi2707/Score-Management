@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.core import validators
 from ckeditor.fields import RichTextField
-from django.db.models import Count, Sum
+from django.db.models import Sum
 
 student_permission = [('student', 'Has student permissions')]
 lecturer_permission = [('lecturer', 'Has lecturer permissions')]

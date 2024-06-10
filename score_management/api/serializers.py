@@ -151,10 +151,10 @@ class CourseWithStudentScoresSerializer(CourseSerializer):
         fields = CourseSerializer.Meta.fields + ['students', 'total_student']
 
 class ForumForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorUploadingWidget)
+    content = forms.CharField(widget=CKEditorUploadingWidget())
     class Meta:
         model = Forum
-        fields = ['id','title','content','creator','course']
+        fields = ['title', 'content']
 
 class ForumSerializer(serializers.ModelSerializer):
     form = ForumForm
