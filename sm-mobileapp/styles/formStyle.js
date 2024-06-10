@@ -9,6 +9,7 @@ export default StyleSheet.create({
   },
   formControl: {
     marginVertical: 5,
+    minWidth: 150,
   },
   formGroup: {
     paddingHorizontal: 40,

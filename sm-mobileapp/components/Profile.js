@@ -113,11 +113,11 @@ const Profile = () => {
 
           <List.Item
             title="Gender"
-            description={user["gender"] ? "Male" : "Female"}
+            description={!user["gender"] ? "Male" : "Female"}
             left={(props) => (
               <List.Icon
                 {...props}
-                icon={user["gender"] ? "gender-male" : "gender-female"}
+                icon={!user["gender"] ? "gender-male" : "gender-female"}
               />
             )}
           />
