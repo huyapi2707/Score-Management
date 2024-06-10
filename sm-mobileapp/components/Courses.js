@@ -10,27 +10,29 @@ import "moment/locale/vi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as action from "../configs/actions.js";
 import * as utils from "../configs/utils.js";
+
 const Courses = ({ navigation }) => {
   const globalStoreDispatcher = useContext(GlobalStoreContext);
   const [courses, setCourses] = useState([]);
   const [kw, setKw] = useState("");
   const [page, setPage] = useState(1);
+
   const loadCourse = async () => {
     if (page < 1) {
       return;
     }
-    const accessToken = await AsyncStorage.getItem("accessToken");
 
+    const accessToken = await AsyncStorage.getItem("accessToken");
     try {
       globalStoreDispatcher(action.turnOnIndicator());
 
       const res = await apis(accessToken).get(
-        endpoint["userCourses"] + `?kw=${kw}&page=${page}`
+        endpoint.userCourses + `?kw=${kw}&page=${page}`
       );
-      if (res["data"]["next"] === null) {
+      if (res.data.next === null) {
         setPage(-1);
       }
-      setCourses((courses) => [...courses, ...res["data"]["results"]]);
+      setCourses((prevCourses) => [...prevCourses, ...res.data.results]);
     } catch (error) {
       console.error(error);
     } finally {
@@ -40,13 +42,13 @@ const Courses = ({ navigation }) => {
 
   const handleLoadMore = ({ nativeEvent }) => {
     if (utils.isCloseToBottom(nativeEvent) && page > 0) {
-      setPage((page) => page + 1);
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
   useEffect(() => {
     loadCourse();
-  }, [kw]);
+  }, [kw, page]);
 
   return (
     <View style={globalStyle.container}>
@@ -61,6 +63,7 @@ const Courses = ({ navigation }) => {
           onChangeText={(value) => {
             setKw(value);
             setPage(1);
+            setCourses([]); // Reset courses when keyword changes
           }}
         />
       </View>
@@ -75,9 +78,7 @@ const Courses = ({ navigation }) => {
               }
             >
               <List.Item
-                title={`${
-                  course.name + " - " + course.subject.name.toUpperCase()
-                }`}
+                title={`${course.name} - ${course.subject.name.toUpperCase()}`}
                 description={moment(course.created_date).fromNow()}
                 left={(props) => (
                   <List.Icon {...props} icon="google-classroom" />

@@ -73,12 +73,12 @@ const globalStoreReducer = (currentState, action) => {
   }
 };
 
-const clientId = "EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU";
-const clientSecret =
-  "q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol";
+// const clientId = "EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU";
+// const clientSecret =
+  // "q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol";
 
-// const clientId = "m6X5b284y5UwnS2onuK7K6y00WLGTOzMPcpyK4BW";
-// const clientSecret = "qkIaLIsMh1W1Y3fvndEGJfpIgYBh09nm5SOHsFfRa5nQA3343OaRQkfGMSKqDuguALSi1QdI4CcwMyQkATFbtMIJg6TBuAYGdJhHpPsfGEDMRArFrJGlD1P8K8aln9IQ";
+const clientId = "m6X5b284y5UwnS2onuK7K6y00WLGTOzMPcpyK4BW";
+const clientSecret = "qkIaLIsMh1W1Y3fvndEGJfpIgYBh09nm5SOHsFfRa5nQA3343OaRQkfGMSKqDuguALSi1QdI4CcwMyQkATFbtMIJg6TBuAYGdJhHpPsfGEDMRArFrJGlD1P8K8aln9IQ";
 
 const firebaseDatabase = firebase
   .app()

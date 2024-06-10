@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import theme from "../configs/theme";
+import ExportButton from "../components/ExportButtons";
 const componentsStyles = StyleSheet.create({
   userProfileImage: {
     height: 200,
@@ -74,6 +75,33 @@ const componentsStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
+  },
+  smallButton: {
+    width: 120,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "blue",
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+  listItemForum: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#E0E0E0",
+    borderColor: "rgba(240,248,255,1)",
+    borderRadius: 10,
+    overflow: "hidden",
+    marginVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+  
 });
 
 export default componentsStyles;

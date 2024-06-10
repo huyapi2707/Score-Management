@@ -1,30 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { View, ScrollView, Button } from "react-native";
 import { DataTable, Text, ActivityIndicator } from "react-native-paper";
 import globalStyle from "../styles/globalStyle";
 import { apis, endpoint } from "../configs/apis";
 import ExportButtons from "./ExportButtons.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as utils from "../configs/utils.js";
+import { AuthenticationContext } from "../configs/context";
 
-const CourseDetail = ({ route }) => {
+const CourseDetail = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
-  const course = route.params?.course;
   const [scoreList, setScoreList] = useState([]);
   const [page, setPage] = useState(1);
+  const { user } = useContext(AuthenticationContext);
+
+  const course = route.params?.course;
+  const courseId = route.params?.courseId;
+  const accessToken = user?.accessToken;
 
   const loadScore = async () => {
-    if (page === -1) {
-      return;
-    }
+    if (page === -1) return;
+
     try {
       setLoading(true);
-      const accessToken = await AsyncStorage.getItem("accessToken");
-
-      const res = await apis(accessToken).get(
+      const token = await AsyncStorage.getItem("accessToken");
+      const res = await apis(token).get(
         endpoint.courseStudentScore(course["id"]) + `?page=${page}`
       );
-      setScoreList((scoreList) => [...scoreList, ...res["data"]["results"]]);
+      setScoreList((prevScoreList) => [...prevScoreList, ...res["data"]["results"]]);
       if (res["data"]["next"] === null) {
         setPage(-1);
       }
@@ -36,12 +39,8 @@ const CourseDetail = ({ route }) => {
   };
 
   const handleScroll = ({ nativeEvent }) => {
-    if (
-      utils.isCloseToBottom(nativeEvent) &&
-      loading === false &&
-      page !== -1
-    ) {
-      setPage((page) => page + 1);
+    if (utils.isCloseToBottom(nativeEvent) && !loading && page !== -1) {
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
@@ -63,6 +62,16 @@ const CourseDetail = ({ route }) => {
             <Text style={globalStyle.textCamel} variant="bodyLarge">
               Subject: {course.subject.name}
             </Text>
+            <Button
+              title="Create Forum"
+              onPress={() =>
+                navigation.navigate("forum", {
+                  courseId: courseId,
+                  accessToken: accessToken,
+                  user: user,
+                })
+              }
+            />
             <ExportButtons courseId={course["id"]} />
             <ScrollView onScroll={handleScroll} style={globalStyle.margin}>
               <DataTable>
@@ -82,26 +91,16 @@ const CourseDetail = ({ route }) => {
                       {student.student.first_name} {student.student.last_name}
                     </DataTable.Cell>
                     <DataTable.Cell numeric>
-                      {
-                        student.scores.find(
-                          (score) => score.name === "mid-term"
-                        ).score
-                      }
+                      {student.scores.find((score) => score.name === "mid-term").score}
                     </DataTable.Cell>
                     <DataTable.Cell numeric>
-                      {
-                        student.scores.find(
-                          (score) => score.name === "end-term"
-                        ).score
-                      }
+                      {student.scores.find((score) => score.name === "end-term").score}
                     </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {student.summary_score}
-                    </DataTable.Cell>
+                    <DataTable.Cell numeric>{student.summary_score}</DataTable.Cell>
                   </DataTable.Row>
                 ))}
               </DataTable>
-              <ActivityIndicator animating={loading} />
+              {loading && <ActivityIndicator animating />}
             </ScrollView>
           </>
         )}
