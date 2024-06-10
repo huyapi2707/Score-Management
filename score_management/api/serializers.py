@@ -1,6 +1,10 @@
+from django.contrib.auth.models import Permission
 from django.db.models import  Sum, F
 from rest_framework import serializers
-from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, Forum, ForumAnswer,ChatKey
+from rest_framework.exceptions import ValidationError
+
+from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, Forum, ForumAnswer, \
+    ChatKey, Student
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 
@@ -11,9 +15,22 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = validated_data.copy()
-        user = User(**data)
-        user.set_password(user.password)
-        user.save()
+
+        student = Student(**data)
+        student.set_password(student.password)
+        student.save()
+        student_permission = Permission.objects.get(codename='student')
+        student.user_permissions.add(student_permission)
+
+        return student
+
+    def validate_email(self, data):
+
+        existed_user = User.objects.filter(email=data)
+        if existed_user:
+            raise ValidationError("Email is existed")
+        else:
+            return data
 
 
 
