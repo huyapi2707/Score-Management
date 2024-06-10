@@ -68,4 +68,9 @@ export default StyleSheet.create({
   textCamel: {
     textTransform: "capitalize",
   },
+  row: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 });

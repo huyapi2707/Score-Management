@@ -82,13 +82,15 @@ class UserViewSet(viewsets.ViewSet, generics.RetrieveUpdateAPIView, generics.Lis
     pagination_class = paginators.UserPaginator
 
     def get_permissions(self):
+
         if self.action in ['partial_update']:
             return [permissions.UserOwnerPermission(), ]
 
-        elif self.action in ['users_create']:
+        elif self.action in ['create']:
             return [builtin_permission.AllowAny(), ]
 
         return [builtin_permission.IsAuthenticated(), ]
+
 
     @action(methods=['get'], url_path="courses", detail=False)
     def get_course(self, request):
