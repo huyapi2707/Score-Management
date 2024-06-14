@@ -2,6 +2,7 @@ import axios from "axios";
 
 const baseUrl = "http://192.168.1.2:8000/";
 
+
 const endpoint = {
   auth: "/o/token/",
   userInfor: "/users/self/",

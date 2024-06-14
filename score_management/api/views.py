@@ -1,9 +1,11 @@
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics, status, parsers, permissions
+from rest_framework import pagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer
+from api import serializers, utils, perms
 from rest_framework import permissions as builtin_permission
-from api.models import Course, User,Lecturer
-from api import serializers, utils
 from api import paginators
 
 
@@ -16,9 +18,10 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
         queryset = self.queryset
 
         if self.action.__eq__('list'):
-            q = self.request.query_params.get('q')
-            if q:
-                queryset = queryset.filter(name__icontains=q)
+            course_name = self.request.query_params.get('name')
+
+            if course_name:
+                queryset = queryset.filter(name__icontains=course_name)
 
         return queryset
 
@@ -38,6 +41,14 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
         try:
             lecturer = Lecturer.objects.get(pk=pk)
             courses = Course.objects.filter(lecturer=lecturer)
+
+            course_name = self.request.query_params.get('name')
+            subject_name = self.request.query_params.get('subject_name')
+            if course_name:
+                courses = courses.filter(name__icontains=course_name)
+            if subject_name:
+                courses= courses.filter(subject__name__icontains=subject_name)
+
             return Response(serializers.CourseSerializer(courses,many=True).data, status=status.HTTP_200_OK)
         except Lecturer.DoesNotExist:
             return Response({"error": "Lecturer not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -76,4 +87,23 @@ class UserViewSet(viewsets.ViewSet, generics.ListAPIView):
             return paginator.get_paginated_response(serializer(paginated_data, many=True).data)
         return Response(serializer(users, many=True).data, status=status.HTTP_200_OK)
 
+class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+    queryset = Forum.objects.filter(is_active=True)
+    serializer_class = serializers.ForumSerializer
+    def get_permissions(self):
+        if self.action in ['add_forum_answer']:
+            return [permissions.IsAuthenticated()]
 
+        return [permissions.AllowAny()]
+
+    @action(methods=['post'], url_path='forum-answer', detail=True)
+    def add_forum_answer(self, request, pk):
+        f = self.get_object().forumanswer_set.create(content=request.data.get('content'),
+                                                 owner=request.user)
+        return Response(serializers.ForumAnswerSerializer(f).data, status=status.HTTP_201_CREATED)
+
+
+class ForumAnswerViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
+    queryset = ForumAnswer.objects.all()
+    serializer_class = serializers.ForumAnswerSerializer
+    permission_classes = [perms.AnswerOwner]

@@ -17,7 +17,7 @@ const Courses = ({ navigation }) => {
   const [searchCourse, setSearchCourse] = useState('');
 
   const loadLecturerCourses = async () => {
-    let url = `${endpoint.coursesLecturer(lecturerId)}?q=${searchCourse}`;
+    let url = `${endpoint.coursesLecturer(lecturerId)}?name=${searchCourse}&subject_name=${searchCourse}`;
     try {
       setLoading(true);
       const res = await apis(accessToken).get(url);
@@ -61,7 +61,7 @@ const Courses = ({ navigation }) => {
                   }
                 >
                   <List.Item
-                    title={course.name}
+                    title={`${course.name + " - " + course.subject.name.toUpperCase()}`}
                     description={moment(course.created_date).fromNow()}
                     left={(props) => (
                       <List.Icon {...props} icon="google-classroom" />
