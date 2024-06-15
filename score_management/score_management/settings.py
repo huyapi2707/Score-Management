@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-7+!vi6b(b1$0tq-((8-rg0fz78k66scafjduk#=4m_44k(q!i$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 AUTH_USER_MODEL = "api.User"
 
@@ -53,7 +53,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser'
     )
+
 }
 
 MIDDLEWARE = [
@@ -68,14 +74,10 @@ MIDDLEWARE = [
 ]
 
 
-<<<<<<< Updated upstream
-ALLOWED_HOSTS= ['192.168.1.26', '127.0.0.1']
-=======
 # ALLOWED_HOSTS = ['192.168.7.103', '127.0.0.1', "localhost", "192.168.1.3"]
 ALLOWED_HOSTS = ['127.0.0.1', "localhost", '192.168.1.2']
 
 
->>>>>>> Stashed changes
 ROOT_URLCONF = 'score_management.urls'
 
 TEMPLATES = [
@@ -159,7 +161,6 @@ cloudinary.config(
     api_secret="8jP48b2XeCzhNdKNe9yGIwiDiN8"
 )
 CKEDITOR_UPLOAD_PATH = "scoreManagement/images"
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Mail
 
@@ -171,13 +172,8 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'dangdinhhuyisme@gmail.com'
 
-<<<<<<< Updated upstream
-CLIENT_ID = 'EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU'
-CLIENT_SECRECT = 'q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol'
-=======
 # CLIENT_ID = 'EkyweN7hkDmBMjv8jVM16ayiO7oIeM9lIESPQvbU'
 # CLIENT_SECRECT = 'q96hEQqqz3qnUN7OVlT9mdKxppqVNdS9pk197kXuE9tTeUlnfObMSukwGsofnwkFTI3x5WjYQhyO0qR06GgdhxAXPZdNtg9DJzr7XlQyZZnQbxJp7P9ibf18aMGcdLol'
 
 CLIENT_ID = "cUigF7plvLHAX0sJe0qwojGDkZiK1PXTh48bhMnt";
 CLIENT_SECRECT = "yqUAK7Xd4DBSJX7HmIhSVapf7icqDn9fjcsmNwN2F92D8kyq4iyTnKDthJ5ak8MhmGzxR7EOCljnhM7pihLdVNmDv4rRJw8BUAELS5uKhp8RlqPk4SrCHCtCfZsx1Hjv";
->>>>>>> Stashed changes

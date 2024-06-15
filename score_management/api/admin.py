@@ -11,8 +11,10 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django import forms
 from api import utils
-from api.models import User, Subject, Course, StudentJoinCourse, Configuration, Student, Lecturer, ScoreColumn
+from api.models import User, Subject, Course, StudentJoinCourse, Configuration, Student, Lecturer, ScoreColumn, Forum, ForumAnswer
 from api.firebase import firebase_database
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+
 
 # Register your models here.
 
@@ -236,8 +238,6 @@ class ScoreColumnAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'percentage', 'course']
 
 
-<<<<<<< Updated upstream
-=======
 class ForumForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditorUploadingWidget)
     class Meta:
@@ -260,9 +260,8 @@ class ForumForm(forms.ModelForm):
 
 
 
->>>>>>> Stashed changes
-admin_site = ScoreManagementAdminSite(name="Score Management")
 
+admin_site = ScoreManagementAdminSite(name="Score Management")
 admin_site.register(User, UserAdmin)
 admin_site.register(Subject, SubjectAdmin)
 admin_site.register(Course, CourseAdmin)
@@ -270,3 +269,5 @@ admin_site.register(Configuration, ConfigurationAdmin)
 admin_site.register(Student, StudentAdmin)
 admin_site.register(Lecturer, LecturerAdmin)
 admin_site.register(ScoreColumn, ScoreColumnAdmin)
+admin_site.register(Forum,ForumAdmin)
+admin_site.register(ForumAnswer,ForumAnswerAdmin)

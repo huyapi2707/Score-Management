@@ -9,6 +9,7 @@ export default StyleSheet.create({
   },
   formControl: {
     marginVertical: 5,
+    minWidth: 150,
   },
   formGroup: {
     paddingHorizontal: 40,
@@ -22,8 +23,6 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-<<<<<<< Updated upstream
-=======
   fontTitle: {
       fontSize: 24,
       fontWeight: "bold",
@@ -48,5 +47,4 @@ export default StyleSheet.create({
     padding: 10, 
     margin: 5, 
   }
->>>>>>> Stashed changes
 });

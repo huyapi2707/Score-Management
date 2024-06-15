@@ -139,7 +139,7 @@ document.getElementById('course').addEventListener('change', async (event) => {
     const courseId = event.target.value
     event.target.disabled = true
 
-    const currentScoreData = await fetch(`/courses/${courseId}/scores`).then(res => res.json())
+    const currentScoreData = await fetch(`/courses/${courseId}/all_scores`).then(res => res.json())
     if (currentScoreData) {
         // overall data
         document.getElementById('courseId').innerText = `ID: ${currentScoreData.id}`

@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import theme from "../configs/theme";
+import ExportButton from "../components/ExportButtons";
 const componentsStyles = StyleSheet.create({
   userProfileImage: {
     height: 200,
@@ -47,8 +48,6 @@ const componentsStyles = StyleSheet.create({
   messageAvatarLeft: {
     marginTop: 5,
   },
-<<<<<<< Updated upstream
-=======
   listCourse: {
     borderRadius: 57.5,
     borderWidth: 5,
@@ -115,7 +114,6 @@ const componentsStyles = StyleSheet.create({
   }
 
   
->>>>>>> Stashed changes
 });
 
 export default componentsStyles;

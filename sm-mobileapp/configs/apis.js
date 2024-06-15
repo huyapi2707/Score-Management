@@ -1,18 +1,14 @@
 import axios from "axios";
 
-<<<<<<< Updated upstream
-const baseUrl = "http://192.168.1.26:8000/";
-=======
 const baseUrl = "http://192.168.1.2:8000";
->>>>>>> Stashed changes
 
 const endpoint = {
   auth: "/o/token/",
   userInfor: "/users/self/",
+  userCourses: "/users/courses/",
+  userViewset: "/users/",
   userPublicInfor: (id) => `/users/${id}/public/`,
   userPublicInforList: (q) => `/users/public/list?q=${q}`,
-<<<<<<< Updated upstream
-=======
   user: (id) => `/users/${id}/`,
   coursesLecturer: (courseId) => `/courses/${courseId}/lecturer_courses/`,
   courseDetail: (courseId) => `/courses/${courseId}/`,
@@ -25,7 +21,6 @@ const endpoint = {
   forumDetail: (forumId) => `/forums/${forumId}/`, 
   forumAnswerParrent: (forumId) => `forums/${forumId}/parent-answers`,
   forumAnswerChild: (forumAnswerId) => `forumanswers/${forumAnswerId}/child-answers`,
->>>>>>> Stashed changes
 };
 
 const apis = (accessToken) => {
@@ -38,6 +33,7 @@ const apis = (accessToken) => {
       },
     });
   }
+
   return axios.create({
     baseURL: baseUrl,
     headers: {
@@ -46,4 +42,4 @@ const apis = (accessToken) => {
   });
 };
 
-export { endpoint, apis };
+export { endpoint, apis, baseUrl };

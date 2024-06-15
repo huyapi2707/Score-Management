@@ -6,6 +6,8 @@ import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Home from "./screens/Home";
 import Chat from "./components/Chat";
+import CourseDetail from "./components/CourseDetail";
+import Forum from './components/Forum';
 import {
   PaperProvider,
   Dialog,
@@ -25,13 +27,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apis, endpoint } from "./configs/apis";
-<<<<<<< Updated upstream
-=======
 import StudentCourse from "./components/StudentCourse.js";
 import LecturerCourse from "./components/LecturerCourse.js";
 import CreateForum from "./components/CreateForum.js"; 
 import ForumDetail from "./components/ForumDetail.js"; 
->>>>>>> Stashed changes
 
 export default function App() {
   const [globalStore, globalStoreDispatcher] = useReducer(globalStoreReducer, {
@@ -119,8 +118,6 @@ export default function App() {
                   <>
                     <MainStack.Screen name="home" component={Home} />
                     <MainStack.Screen name="chat" component={Chat} />
-<<<<<<< Updated upstream
-=======
                     <MainStack.Screen
                       name="userCourse"
                       component={
@@ -132,7 +129,6 @@ export default function App() {
                     <MainStack.Screen name="forum" component={Forum} />
                     <MainStack.Screen name="createforum" component={CreateForum} />
                     <MainStack.Screen name="forumdetail" component={ForumDetail} />
->>>>>>> Stashed changes
                   </>
                 ) : (
                   <>

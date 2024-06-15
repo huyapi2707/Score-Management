@@ -1,10 +1,38 @@
+from django.contrib.auth.models import Permission
 from django.db.models import  Sum, F
 from rest_framework import serializers
-from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, ChatKey
+from rest_framework.exceptions import ValidationError
+
+from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, Forum, ForumAnswer, \
+    ChatKey, Student
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django import forms
 
 
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.SerializerMethodField()
+
+
+    def create(self, validated_data):
+        data = validated_data.copy()
+
+        student = Student(**data)
+        student.set_password(student.password)
+        student.save()
+        student_permission = Permission.objects.get(codename='student')
+        student.user_permissions.add(student_permission)
+
+        return student
+
+    def validate_email(self, data):
+
+        existed_user = User.objects.filter(email=data)
+        if existed_user:
+            raise ValidationError("Email is existed")
+        else:
+            return data
+
+
 
     def get_role(self, instance):
 
@@ -61,6 +89,8 @@ class ScoreColumnSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'percentage']
 
 
+
+
 class CourseSerializer(serializers.ModelSerializer):
     lecturer = UserSerializer()
     subject = SubjectSerializer()
@@ -96,6 +126,18 @@ class StudentScoreDetailsSerializer(serializers.ModelSerializer):
         model = StudentJoinCourse
         fields = ['student', 'scores', 'summary_score']
 
+class StudentScoreSerializer(serializers.ModelSerializer):
+    scores = ScoreDetailSerializer(many=True)
+
+    summary_score = serializers.SerializerMethodField()
+
+    def get_summary_score(self, obj):
+        return obj.scores.annotate(p=F('score') * F('score_column__percentage')).aggregate(total=Sum('p'))['total']
+
+    class Meta:
+        model = StudentJoinCourse
+        fields = ['scores', 'summary_score']
+
 
 class CourseWithStudentScoresSerializer(CourseSerializer):
     students = StudentScoreDetailsSerializer(many=True)
@@ -107,8 +149,6 @@ class CourseWithStudentScoresSerializer(CourseSerializer):
     class Meta:
         model = CourseSerializer.Meta.model
         fields = CourseSerializer.Meta.fields + ['students', 'total_student']
-<<<<<<< Updated upstream
-=======
 
 class ForumForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditorUploadingWidget())
@@ -121,8 +161,9 @@ class ForumSerializer(serializers.ModelSerializer):
     creator = UserSerializer()
     course = CourseSerializer()
     class Meta:
-        model = Forum
+        model = Foru
         fields = '__all__'
+
 
 
 
@@ -131,4 +172,4 @@ class ForumAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForumAnswer
         fields = '__all__'
->>>>>>> Stashed changes
+

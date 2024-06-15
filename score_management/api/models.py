@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.core import validators
 from ckeditor.fields import RichTextField
-from django.db.models import Count, Sum
+from django.db.models import Sum
 
 student_permission = [('student', 'Has student permissions')]
 lecturer_permission = [('lecturer', 'Has lecturer permissions')]
@@ -40,6 +40,7 @@ class User(AbstractUser):
 
 
 class Student(User):
+
 
     class Meta:
         permissions = student_permission
@@ -134,15 +135,25 @@ class StudentScoreDetail(models.Model):
 
 
 
+
+
 class Forum(BaseModel):
+    title = models.CharField(max_length=255, null=True)
     content = RichTextField()
     creator = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name="creating_forums")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    def __str__(self):
+        return self.title
 
 
 class ForumAnswer(BaseModel):
-    content = RichTextField()
-    owner = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name="answer_forums")
+    content = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="answer_forums")
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE, null=True)
     parent = models.ForeignKey('ForumAnswer', on_delete=models.CASCADE, null=True, related_name="children")
+
+    def __str__(self):
+        return self.content
 
 
 class ChatKey(models.Model):
