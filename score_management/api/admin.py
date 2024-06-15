@@ -256,7 +256,8 @@ class ForumAnswerAdmin(admin.ModelAdmin):
 class ForumForm(forms.ModelForm):
     class Meta:
         model = ForumAnswer
-        fields = ['id', 'content', 'owner', 'forum']
+        fields = ['id', 'content', 'owner', 'forum', 'parent']
+
 
 
 

@@ -29,7 +29,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apis, endpoint } from "./configs/apis";
 import StudentCourse from "./components/StudentCourse.js";
 import LecturerCourse from "./components/LecturerCourse.js";
-// import CreateForum from "../components/CreateForum.js"; 
+import CreateForum from "./components/CreateForum.js"; 
+import ForumDetail from "./components/ForumDetail.js"; 
 
 export default function App() {
   const [globalStore, globalStoreDispatcher] = useReducer(globalStoreReducer, {
@@ -126,7 +127,8 @@ export default function App() {
                       }
                     />
                     <MainStack.Screen name="forum" component={Forum} />
-                    {/* <MainStack.Screen name="createforum" component={CreateForum} /> */}
+                    <MainStack.Screen name="createforum" component={CreateForum} />
+                    <MainStack.Screen name="forumdetail" component={ForumDetail} />
                   </>
                 ) : (
                   <>

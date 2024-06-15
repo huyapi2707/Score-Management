@@ -99,8 +99,20 @@ const componentsStyles = StyleSheet.create({
     overflow: "hidden",
     marginVertical: 5,
     paddingHorizontal: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
+  listForumAnswer:{
+    borderRadius: 57.5,
+    borderWidth: 5,
+    borderColor: "rgba(0,0,0,0.2)",
+    padding: 10,
+  },
+  contentTextForum: {
+      backgroundColor: "rgba(0,0,0,0.1)",
+      padding: 10,
+      color: "#000"
+  }
+
   
 });
 

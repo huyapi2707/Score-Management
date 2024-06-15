@@ -24,9 +24,27 @@ export default StyleSheet.create({
     justifyContent: "space-between",
   },
   fontTitle: {
-    fontWeight: "bold"
+      fontSize: 24,
+      fontWeight: "bold",
   },
   fontCreator: {
     fontStyle: "italic" 
+  },
+  right: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 10,
+  },
+  contentText: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 10,
+    backgroundColor: "rgba(76, 175, 80, 0.9)",
+    color: "#fff",
+    padding: 10, 
+  },
+  formCreate:{
+    padding: 10, 
+    margin: 5, 
   }
 });

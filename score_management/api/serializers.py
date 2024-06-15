@@ -161,8 +161,9 @@ class ForumSerializer(serializers.ModelSerializer):
     creator = UserSerializer()
     course = CourseSerializer()
     class Meta:
-        model = Forum
-        fields = ['id', 'title', 'content','creator','course', 'created_at']
+        model = Foru
+        fields = '__all__'
+
 
 
 
@@ -170,4 +171,5 @@ class ForumAnswerSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
     class Meta:
         model = ForumAnswer
-        fields = ['id', 'content', 'owner', 'created_at']
+        fields = '__all__'
+

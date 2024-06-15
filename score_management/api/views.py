@@ -4,13 +4,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions as builtin_permission
 from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer, Student
-from api import serializers, utils, permissions, perms
+from api import serializers, utils, permissions
 from api import paginators
 from api import permissions
 
 class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.filter(is_active=True)
     serializer_class = serializers.CourseSerializer
+    # permission_classes = [permissions.IsAuthenticated]
 
     permission_classes = [builtin_permission.IsAuthenticated]
 
@@ -40,6 +41,7 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
             serializered_result = serializers.StudentScoreDetailsSerializer(paginated_result, many=True)
             return paginator.get_paginated_response(serializered_result.data)
         return Response(serializers.StudentScoreDetailsSerializer(score_set, many=True).data, status.HTTP_200_OK)
+
 
     @action(methods=['get'], url_path='score_statistic', detail=True)
     def get_score_statistic(self, request, pk):
@@ -181,9 +183,70 @@ class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         f = self.get_object().forumanswer_set.create(content=request.data.get('content'),
                                                      owner=request.user)
         return Response(serializers.ForumAnswerSerializer(f).data, status=status.HTTP_201_CREATED)
+      
+        student = request.user
+        if not student.has_perm("api.student"):
+            return Response("Not a student", status=status.HTTP_400_BAD_REQUEST)
+        query = (StudentJoinCourse.objects
+                 .filter(student=student)
+                 .filter(course_id=course_id)
+                 .first())
+        serializer = serializers.StudentScoreSerializer
+        return Response(serializer(query).data, status=status.HTTP_200_OK)
+
+
+class ForumViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+    queryset = Forum.objects.filter(is_active=True)
+    serializer_class = serializers.ForumSerializer
+    # permission_classes = [builtin_permission.IsAuthenticated]
+
+
+    @action(methods=['get'], url_path='course/(?P<course_id>\d+)',url_name='list-forum', detail=False)
+    def get_list_forum(self, request, course_id):
+        course = Course.objects.get(pk=course_id)
+        forums = course.forum_set.filter(is_active=True)
+        serializer = serializers.ForumSerializer(forums, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='forum-answer-parents', detail=True)
+    def post_forum_answer_parents(self, request, pk):
+        f = self.get_object().forumanswer_set.create(content=request.data.get('content'),
+                                                     owner=request.user)
+        return Response(serializers.ForumAnswerSerializer(f).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['get'], url_path='parent-answers')
+    def get_parent_answers(self, request, pk=None):
+            forum = self.get_object()
+            parent_answers = ForumAnswer.objects.filter(forum=forum, parent=None)
+            return Response(serializers.ForumAnswerSerializer(parent_answers, many=True).data, status=status.HTTP_200_OK)
 
 
 class ForumAnswerViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = ForumAnswer.objects.all()
     serializer_class = serializers.ForumAnswerSerializer
-    permission_classes = [perms.AnswerOwner]
+    permission_classes = [permissions.AnswerOwner]
+
+    @action(methods=['get'], url_path='parents-answer', detail=True)
+    def get_parents_answer(self, request, forum_id):
+        forum = Forum.objects.get(pk=forum_id)
+        answer = self.get_object()
+        parent_answer = answer.parent
+        if parent_answer is None:
+            serializer = serializers.ForumAnswerSerializer(parent_answer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='answers', url_name='forum-answer-child',detail=True)
+    def post_forum_answer_child(self, request, pk=None):
+        parent_answer = self.get_object()
+        serializer = serializers.ForumAnswerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user, parent=parent_answer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['get'], url_path='child-answers')
+    def get_child_answers(self, request, pk=None):
+            parent_answer = self.get_object()
+            child_answers = ForumAnswer.objects.filter(parent=parent_answer)
+            return Response(serializers.ForumAnswerSerializer(child_answers, many=True).data, status=status.HTTP_200_OK)
+
+
