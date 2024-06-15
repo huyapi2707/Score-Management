@@ -107,3 +107,28 @@ class CourseWithStudentScoresSerializer(CourseSerializer):
     class Meta:
         model = CourseSerializer.Meta.model
         fields = CourseSerializer.Meta.fields + ['students', 'total_student']
+<<<<<<< Updated upstream
+=======
+
+class ForumForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget())
+    class Meta:
+        model = Forum
+        fields = ['title', 'content']
+
+class ForumSerializer(serializers.ModelSerializer):
+    form = ForumForm
+    creator = UserSerializer()
+    course = CourseSerializer()
+    class Meta:
+        model = Forum
+        fields = '__all__'
+
+
+
+class ForumAnswerSerializer(serializers.ModelSerializer):
+    owner = UserSerializer()
+    class Meta:
+        model = ForumAnswer
+        fields = '__all__'
+>>>>>>> Stashed changes

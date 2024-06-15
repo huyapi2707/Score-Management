@@ -236,6 +236,31 @@ class ScoreColumnAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'percentage', 'course']
 
 
+<<<<<<< Updated upstream
+=======
+class ForumForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget)
+    class Meta:
+        model = Forum
+        fields = ['id','title','content','creator','course']
+
+class ForumAdmin(admin.ModelAdmin):
+    form = ForumForm
+    list_display = ['id', 'title', 'created_at',]
+
+class ForumAnswerAdmin(admin.ModelAdmin):
+    def get_form(self, request, obj=None, **kwargs):
+        kwargs['form'] = ForumForm
+        return super().get_form(request, obj, **kwargs)
+
+class ForumForm(forms.ModelForm):
+    class Meta:
+        model = ForumAnswer
+        fields = ['id', 'content', 'owner', 'forum', 'parent']
+
+
+
+>>>>>>> Stashed changes
 admin_site = ScoreManagementAdminSite(name="Score Management")
 
 admin_site.register(User, UserAdmin)
