@@ -1,5 +1,3 @@
-// components/ForumDetail.js
-
 import React, { useState, useEffect } from "react";
 import { View, ScrollView, ActivityIndicator } from "react-native";
 import { Button, Text } from "react-native-paper";
@@ -9,13 +7,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import formStyle from "../styles/formStyle";
 import componentsStyles from "../styles/componentsStyle";
 import ForumAnswer from "./ForumAnswer";
+import CreateAnswer from "./CreateAnswer";
 
 const ForumDetail = ({ route, navigation }) => {
   const { forumId } = route.params;
   const [forumDetail, setForumDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showCreateAnswer, setShowCreateAnswer] = useState(false);
 
-  // Function to fetch forum detail
   const fetchForumDetail = async () => {
     setLoading(true);
     try {
@@ -24,18 +23,20 @@ const ForumDetail = ({ route, navigation }) => {
       setForumDetail(response.data);
     } catch (error) {
       console.error("Error fetching forum detail:", error);
-      // Handle error state if needed
     } finally {
       setLoading(false);
     }
   };
 
-  // Effect to fetch forum detail when component mounts
   useEffect(() => {
     fetchForumDetail();
   }, []);
 
-  // Render loading indicator while fetching data
+  const handleCreateAnswerSuccess = () => {
+    setShowCreateAnswer(false);
+    fetchForumDetail();
+  };
+
   if (loading) {
     return (
       <View style={[globalStyle.container, globalStyle.flexCenter]}>
@@ -67,7 +68,14 @@ const ForumDetail = ({ route, navigation }) => {
           {forumDetail?.content}
         </Text>
       </View>
-      <Button style={formStyle.right}>Answer</Button>
+      <Button
+        style={formStyle.right}
+        onPress={() => setShowCreateAnswer(!showCreateAnswer)}
+      >
+        Answer
+      </Button>
+
+      {showCreateAnswer && <CreateAnswer forumId={forumDetail?.id} onCreateSuccess={handleCreateAnswerSuccess} />}
 
       <ForumAnswer forumId={forumDetail?.id} />
     </ScrollView>

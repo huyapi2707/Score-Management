@@ -260,7 +260,6 @@ class ForumForm(forms.ModelForm):
 
 
 
-
 admin_site = ScoreManagementAdminSite(name="Score Management")
 admin_site.register(User, UserAdmin)
 admin_site.register(Subject, SubjectAdmin)

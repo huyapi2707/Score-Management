@@ -60,7 +60,7 @@ const LecturerCourse = ({ route, navigation }) => {
   );
 
   return (
-    <ScrollView>
+    <View>
       <View style={[globalStyle.flexCenter, globalStyle.margin]}>
         <Text variant="titleLarge">Course: {courseDetail?.name}</Text>
       </View>
@@ -74,7 +74,7 @@ const LecturerCourse = ({ route, navigation }) => {
         </Text>
       </View>
 
-      <View>
+      <ScrollView>
         <View>
           <View style={componentsStyles.buttonContainer}>
             <ExportButtons courseId={courseDetail?.id} />
@@ -164,8 +164,8 @@ const LecturerCourse = ({ route, navigation }) => {
             <Forum courseId={courseDetail.id} navigation={navigation} />
           )}
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
