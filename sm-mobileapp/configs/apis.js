@@ -1,6 +1,10 @@
 import axios from "axios";
 
+<<<<<<< Updated upstream
 const baseUrl = "http://192.168.1.6:8000";
+=======
+const baseUrl = "http://192.168.1.2:8000";
+>>>>>>> Stashed changes
 
 const endpoint = {
   auth: "/o/token/",
@@ -18,10 +22,16 @@ const endpoint = {
   courseDetail: (courseId) => `/courses/${courseId}/all_scores/`,
   forum: (courseId) => `/courses/${courseId}/create_forum/`,
   listForum: (courseId) => `/forums/course/${courseId}/`,
+<<<<<<< Updated upstream
   forumDetail: (forumId) => `/forums/${forumId}/`,
   forumAnswerParrent: (forumId) => `forums/${forumId}/parent-answers`,
   forumAnswerChild: (forumAnswerId) =>
     `forumanswers/${forumAnswerId}/child-answers`,
+=======
+  forumDetail: (forumId) => `/forums/${forumId}/`, 
+  forumAnswerParrent: (forumId) => `forums/${forumId}/parent-answers`,
+  forumAnswerChild: (forumAnswerId) => `forumanswers/${forumAnswerId}/child-answers`,
+>>>>>>> Stashed changes
 };
 
 const apis = (accessToken) => {

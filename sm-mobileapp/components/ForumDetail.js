@@ -61,6 +61,7 @@ const ForumDetail = ({ route, navigation }) => {
             {forumDetail?.creator?.last_name}
           </Text>
         </View>
+<<<<<<< Updated upstream
         <Text
           style={[formStyle.contentText, componentsStyles.contentTextForum]}
         >
@@ -68,6 +69,18 @@ const ForumDetail = ({ route, navigation }) => {
         </Text>
       </View>
       <Button style={formStyle.right}>Answer</Button>
+=======
+        <Text style={[formStyle.contentText, componentsStyles.contentTextForum]}>{forumDetail?.content}</Text>
+      </View>
+      <Button
+        style={formStyle.right}
+        onPress={() => {
+          navigation.navigate("forumanswer", { forumId: forumDetail?.id });
+        }}
+      >
+        Answer
+      </Button>
+>>>>>>> Stashed changes
 
       <ForumAnswer forumId={forumDetail?.id} />
     </ScrollView>

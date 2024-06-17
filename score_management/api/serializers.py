@@ -168,10 +168,8 @@ class ForumSerializer(serializers.ModelSerializer):
 
 
 
-
 class ForumAnswerSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
     class Meta:
         model = ForumAnswer
         fields = '__all__'
-
