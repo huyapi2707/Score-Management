@@ -107,12 +107,12 @@ const componentsStyles = StyleSheet.create({
     borderColor: "rgba(0,0,0,0.2)",
     padding: 10,
   },
+  
   contentTextForum: {
       backgroundColor: "rgba(0,0,0,0.1)",
       padding: 10,
       color: "#000"
   }
-
   
 });
 

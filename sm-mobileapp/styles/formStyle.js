@@ -33,12 +33,10 @@ export default StyleSheet.create({
   right: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginBottom: 10,
   },
   contentText: {
     fontSize: 16,
     lineHeight: 24,
-    marginBottom: 10,
     backgroundColor: "rgba(76, 175, 80, 0.9)",
     color: "#fff",
     padding: 10, 

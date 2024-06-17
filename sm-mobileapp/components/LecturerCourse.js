@@ -52,31 +52,6 @@ const LecturerCourse = ({ route, navigation }) => {
     setNumberOfItemsPerPage(newItemsPerPage);
     setPage(0);
   }, []);
-<<<<<<< Updated upstream
-
-  const from = page * numberOfItemsPerPage;
-  const to = Math.min(
-    (page + 1) * numberOfItemsPerPage,
-    courseDetail?.students?.length || 0
-  );
-
-  return (
-    <ScrollView>
-      <View style={[globalStyle.flexCenter, globalStyle.margin]}>
-        <Text variant="titleLarge">Course: {courseDetail?.name}</Text>
-      </View>
-      <View style={globalStyle.margin}>
-        <Text variant="bodyLarge">
-          Lecturer: {courseDetail?.lecturer.first_name}{" "}
-          {courseDetail?.lecturer.last_name}
-        </Text>
-        <Text style={globalStyle.textCamel} variant="bodyLarge">
-          Subject: {courseDetail?.subject.name}
-        </Text>
-      </View>
-
-      <View>
-=======
 
   const from = page * numberOfItemsPerPage;
   const to = Math.min(
@@ -100,7 +75,6 @@ const LecturerCourse = ({ route, navigation }) => {
       </View>
 
       <ScrollView>
->>>>>>> Stashed changes
         <View>
           <View style={componentsStyles.buttonContainer}>
             <ExportButtons courseId={courseDetail?.id} />
