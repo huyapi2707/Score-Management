@@ -30,6 +30,7 @@ class Configuration(BaseModel):
     ):
         if Configuration.objects.first() is not None:
             raise ValidationError("Configuration is existing")
+        super().save(self, force_update=force_update, using=using, update_fields=update_fields)
 
 
 class User(AbstractUser):

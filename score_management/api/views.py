@@ -3,7 +3,7 @@ from rest_framework import viewsets, generics, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import permissions as builtin_permission
-from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer, Student
+from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer, Student, Configuration
 from api import serializers, utils, permissions
 from api import paginators
 from api import permissions
@@ -11,15 +11,9 @@ from api import permissions
 class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.filter(is_active=True)
     serializer_class = serializers.CourseSerializer
-    # permission_classes = [permissions.IsAuthenticated]
-
     permission_classes = [builtin_permission.IsAuthenticated]
 
-    # def get_permissions(self):
-    #     if self.action in ['get_courses_by_lecturer','post_forum']:
-    #         return [builtin_permission.IsAuthenticated()]
-    #
-    #     return [builtin_permission.AllowAny()]
+
     def get_queryset(self):
         queryset = self.queryset
 
@@ -34,7 +28,6 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
     @action(methods=["get"], url_path='score', detail=True)
     def get_score(self, request, pk):
         score_set = self.get_object().students.all()
-
         paginator = paginators.StudentScorePaginator()
         paginated_result = paginator.paginate_queryset(score_set, request)
         if paginated_result is not None:
@@ -50,6 +43,7 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
 
     @action(methods=['get'], url_path='all_scores', detail=True)
     def get_course_with_all_student_score(self, request, pk):
+
         query = utils.get_scores_data_by_course_id(pk)
         return Response(serializers.CourseWithStudentScoresSerializer(query).data, status=status.HTTP_200_OK)
 

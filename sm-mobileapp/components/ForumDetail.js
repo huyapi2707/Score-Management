@@ -61,16 +61,13 @@ const ForumDetail = ({ route, navigation }) => {
             {forumDetail?.creator?.last_name}
           </Text>
         </View>
-        <Text style={[formStyle.contentText, componentsStyles.contentTextForum]}>{forumDetail?.content}</Text>
+        <Text
+          style={[formStyle.contentText, componentsStyles.contentTextForum]}
+        >
+          {forumDetail?.content}
+        </Text>
       </View>
-      <Button
-        style={formStyle.right}
-        onPress={() => {
-          navigation.navigate("forumanswer", { forumId: forumDetail?.id });
-        }}
-      >
-        Answer
-      </Button>
+      <Button style={formStyle.right}>Answer</Button>
 
       <ForumAnswer forumId={forumDetail?.id} />
     </ScrollView>

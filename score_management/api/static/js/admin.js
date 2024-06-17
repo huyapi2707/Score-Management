@@ -9,6 +9,7 @@ async function drawCharts() {
         return
     }
     const courseId = document.getElementById('course').value
+
     const data = await fetch(`/courses/${courseId}/score_statistic/`).then(res => res.json())
 
     if (data) {

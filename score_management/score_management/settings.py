@@ -24,8 +24,6 @@ SECRET_KEY = 'django-insecure-7+!vi6b(b1$0tq-((8-rg0fz78k66scafjduk#=4m_44k(q!i$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-
 AUTH_USER_MODEL = "api.User"
 
 # Application definition
@@ -53,6 +51,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.SessionAuthentication'
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
@@ -73,10 +72,7 @@ MIDDLEWARE = [
 
 ]
 
-
-# ALLOWED_HOSTS = ['192.168.7.103', '127.0.0.1', "localhost", "192.168.1.3"]
-ALLOWED_HOSTS = ['127.0.0.1', "localhost", '192.168.1.2']
-
+ALLOWED_HOSTS = ['127.0.0.1', "192.168.27.103", '192.168.1.6']
 
 ROOT_URLCONF = 'score_management.urls'
 
@@ -106,8 +102,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'score_management_db',
-        'USER': 'root',
-        'PASSWORD': 'Admin@123',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
 
     }
 }
