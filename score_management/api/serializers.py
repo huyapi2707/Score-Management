@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from api.models import User, Course, ScoreColumn, StudentJoinCourse, StudentScoreDetail, Subject, Forum, ForumAnswer, \
-    ChatKey, Student
+    ChatKey, Student, Configuration
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 
@@ -15,7 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = validated_data.copy()
-
+        configuration = Configuration.objects.first()
+        if not data.get("email").endswith(configuration.base_domain):
+            raise ValidationError("Email domain doesn't excepted")
         student = Student(**data)
         student.set_password(student.password)
         student.save()
@@ -161,7 +163,7 @@ class ForumSerializer(serializers.ModelSerializer):
     creator = UserSerializer()
     course = CourseSerializer()
     class Meta:
-        model = Foru
+        model = Forum
         fields = '__all__'
 
 
