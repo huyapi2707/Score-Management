@@ -1,10 +1,11 @@
-from django.core.exceptions import ValidationError
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
 from django.core import validators
 from ckeditor.fields import RichTextField
 from django.db.models import Sum
+from rest_framework.exceptions import ValidationError
 
 student_permission = [('student', 'Has student permissions')]
 lecturer_permission = [('lecturer', 'Has lecturer permissions')]
@@ -41,22 +42,17 @@ class User(AbstractUser):
 
 
 class Student(User):
-
-
     class Meta:
         permissions = student_permission
 
 
-
 class Lecturer(User):
-
     class Meta:
         permissions = lecturer_permission
 
 
 class Subject(BaseModel):
     name = models.CharField(null=False, unique=True, max_length=255)
-
 
     def __str__(self):
         return self.name
@@ -72,14 +68,6 @@ class Course(BaseModel):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        super(Course, self).save(*args, **kwargs)
-        mid_term_column = ScoreColumn.objects.create(name="mid-term", percentage=0.5, course_id=self.id)
-        end_term_column = ScoreColumn.objects.create(name="end-term", percentage=0.5, course_id=self.id)
-        end_term_column.save()
-        mid_term_column.save()
-        return
-
 
 class ScoreColumn(BaseModel):
     class Meta:
@@ -93,24 +81,19 @@ class ScoreColumn(BaseModel):
 
     def save(self, *args, **kwargs):
 
-        self.percentage = round(self.percentage, 2)
-        try:
-            course = Course.objects.get(pk=self.course_id)
+        course = Course.objects.get(pk=self.course_id)
 
-            current_columns_quantity = course.score_columns.count()
-            available_percentage = course.score_columns.aggregate(total=Sum("percentage"))['percentage']
-            if (current_columns_quantity < Configuration.objects.first().max_score_columns_quantity
-                    and self.percentage <= available_percentage):
-                super(ScoreColumn, self).save(*args, **kwargs)
-            else:
-                raise ValueError("Score column quantity is hitting limit")
-        except:
+        current_columns_quantity = course.score_columns.count()
+        available_percentage = round(1 - course.score_columns.aggregate(total=Sum("percentage"))['total'], 2)
+
+        if (current_columns_quantity < Configuration.objects.first().max_score_columns_quantity
+                and self.percentage <= available_percentage):
             super(ScoreColumn, self).save(*args, **kwargs)
+        else:
+            raise ValidationError("Score column quantity is hitting limit")
 
 
 class StudentJoinCourse(models.Model):
-
-
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="join_course")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="students")
     joined_date = models.DateTimeField(null=False, auto_now=True)
@@ -124,7 +107,7 @@ class StudentScoreDetail(models.Model):
         unique_together = ["score_column", "student_join_course"]
         ordering = ['score_column']
 
-    student_join_course = models.ForeignKey(StudentJoinCourse, on_delete=models.DO_NOTHING, related_name="scores")
+    student_join_course = models.ForeignKey(StudentJoinCourse, on_delete=models.CASCADE, related_name="scores")
     score = models.FloatField(null=False,
                               validators=[validators.MinValueValidator(0.0), validators.MaxValueValidator(10.0)])
     score_column = models.ForeignKey(ScoreColumn, null=False, related_name="+", on_delete=models.CASCADE)
@@ -134,15 +117,12 @@ class StudentScoreDetail(models.Model):
         super(StudentScoreDetail, self).save(*args, **kwargs)
 
 
-
-
-
-
 class Forum(BaseModel):
     title = models.CharField(max_length=255, null=True)
     content = RichTextField()
     creator = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=False, related_name="creating_forums")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+
     def __str__(self):
         return self.title
 

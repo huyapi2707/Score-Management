@@ -1,5 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import { Text, Searchbar, List } from "react-native-paper";
 import componentsStyles from "../styles/componentsStyle";
 import globalStyle from "../styles/globalStyle";
@@ -23,6 +28,7 @@ const Courses = ({ navigation }) => {
     }
 
     const accessToken = await AsyncStorage.getItem("accessToken");
+    console.log(accessToken);
     try {
       globalStoreDispatcher(action.turnOnIndicator());
 

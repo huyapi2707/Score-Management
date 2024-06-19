@@ -1,9 +1,11 @@
 from django.db.models import Prefetch
 from rest_framework import viewsets, generics, status, parsers
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import permissions as builtin_permission
-from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer, Student, Configuration
+from api.models import Course, User, Forum, ForumAnswer, StudentJoinCourse, Lecturer, Student, Configuration, \
+    ScoreColumn
 from api import serializers, utils, permissions
 from api import paginators
 from api import permissions
@@ -11,8 +13,12 @@ from api import permissions
 class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Course.objects.filter(is_active=True)
     serializer_class = serializers.CourseSerializer
-    permission_classes = [builtin_permission.IsAuthenticated]
 
+
+    def get_permissions(self):
+        if self.action in ['add_score_column']:
+            return [permissions.LecturerPermission()]
+        return [builtin_permission.IsAuthenticated()]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -24,6 +30,23 @@ class CourseViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPI
                 queryset = queryset.filter(name__icontains=course_name)
 
         return queryset
+
+    @action(methods=["post"], url_path="score_column", detail=True)
+    def add_score_column(self, request, pk):
+        course = self.get_object()
+        data = request.data
+        name = data.get("name")
+        percentage = data.get("percentage")
+        if name is None:
+            raise ValidationError("Required field name")
+        if percentage is None:
+            raise ValidationError("Required field percentage")
+
+        score_column = ScoreColumn(name=name, percentage=float(percentage), course=course)
+
+        score_column.save()
+        return Response(serializers.ScoreColumnSerializer(score_column).data,status=status.HTTP_201_CREATED)
+
 
     @action(methods=["get"], url_path='score', detail=True)
     def get_score(self, request, pk):

@@ -7,6 +7,7 @@ const endpoint = {
   userInfor: "/users/self/",
   userCourses: "/users/courses/",
   userViewset: "/users/",
+  courseScoreColumn: (id) => `/courses/${id}/score_column/`,
   userPublicInfor: (id) => `/users/${id}/public/`,
   userPublicInforList: (q) => `/users/public/list?q=${q}`,
   user: (id) => `/users/${id}/`,
