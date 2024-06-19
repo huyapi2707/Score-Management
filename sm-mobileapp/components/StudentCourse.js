@@ -1,4 +1,4 @@
-const { View, StyleSheet } = require("react-native");
+const { View, StyleSheet, ScrollView } = require("react-native");
 
 import { Text, DataTable } from "react-native-paper";
 import globalStyle from "../styles/globalStyle";
@@ -8,7 +8,9 @@ import componentsStyles from "../styles/componentsStyle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apis, endpoint } from "../configs/apis";
 import * as actions from "../configs/actions";
-const StudentCourse = ({ route }) => {
+import Forum from "../components/Forum";
+
+const StudentCourse = ({ route, navigation }) => {
   const { user } = useContext(AuthenticationContext);
   const globalStoreDispatcher = useContext(GlobalStoreContext);
   const course = route.params?.course;
@@ -80,9 +82,14 @@ const StudentCourse = ({ route }) => {
         </DataTable>
       </View>
       <View>
-        <View style={componentsStyles["sectionTitle"]}>
-          <Text variant="titleMedium">FORUM</Text>
-        </View>
+      <ScrollView>
+          <View style={componentsStyles.sectionTitle}>
+            <Text variant="titleMedium">FORUM</Text>
+          </View>
+          {course?.id && (
+            <Forum courseId={course.id} navigation={navigation} />
+          )}
+        </ScrollView>
       </View>
     </View>
   );

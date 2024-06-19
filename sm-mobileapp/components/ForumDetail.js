@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import { View, ScrollView, ActivityIndicator, Dimensions } from "react-native";
 import { Button, Text } from "react-native-paper";
 import globalStyle from "../styles/globalStyle";
 import { apis, endpoint } from "../configs/apis";
@@ -8,6 +8,7 @@ import formStyle from "../styles/formStyle";
 import componentsStyles from "../styles/componentsStyle";
 import ForumAnswer from "./ForumAnswer";
 import CreateAnswer from "./CreateAnswer";
+import RenderHtml from 'react-native-render-html';
 
 const ForumDetail = ({ route, navigation }) => {
   const { forumId } = route.params;
@@ -62,11 +63,18 @@ const ForumDetail = ({ route, navigation }) => {
             {forumDetail?.creator?.last_name}
           </Text>
         </View>
-        <Text
+        <View
           style={[formStyle.contentText, componentsStyles.contentTextForum]}
         >
-          {forumDetail?.content}
-        </Text>
+          <RenderHtml
+          contentWidth={Dimensions.get('window').width}
+          source={{ html: forumDetail?.content || '' }}
+          tagsStyles={{
+            p: { margin: 0, padding: 0 },
+            img: { maxWidth: '100%', height: 'auto' },
+          }}
+        />
+        </View>
       </View>
       <Button
         style={formStyle.right}

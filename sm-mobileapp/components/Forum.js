@@ -68,7 +68,7 @@ const Forum = ({ courseId, navigation }) => {
   }
 
   return (
-    <ScrollView
+<ScrollView
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
