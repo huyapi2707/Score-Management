@@ -37,6 +37,10 @@ class UserAdminForm(forms.ModelForm):
         return user
 
 
+
+
+
+
 class UserAdmin(admin.ModelAdmin):
     search_fields = ['id', 'first_name', 'last_name', 'email']
     list_display = ['id', 'first_name', 'last_name', 'email', 'gender', 'created_at', 'updated_at']
@@ -86,8 +90,11 @@ class SubjectAdmin(BaseAdmin):
     list_display = ["id", "name", "created_at", "updated_at", "is_active"]
 
 
+
+
 class CourseAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "subject", "lecturer", "created_at", "updated_at", "is_active"]
+
 
     def subject(self, obj):
         link = reverse("admin:api_subject_change", args=[obj.subject_id])
@@ -236,6 +243,7 @@ class ScoreManagementAdminSite(admin.AdminSite):
 
 class ScoreColumnAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'percentage', 'course']
+    search_fields = ['course__name']
 
 
 class ForumForm(forms.ModelForm):

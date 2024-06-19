@@ -69,18 +69,18 @@ const Forum = ({ courseId, navigation }) => {
 
   return (
     <ScrollView
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <View>
         <View style={componentsStyles.buttonContainer}>
-
           <Button
-            mode="contained"
+            icon={"post"}
+            mode="contained-tonal"
             onPress={handleCreateForum}
-            style={componentsStyles.smallButton}
-            labelStyle={componentsStyles.buttonLabel}
           >
-            New
+            New Post
           </Button>
         </View>
         {error ? (
@@ -88,15 +88,17 @@ const Forum = ({ courseId, navigation }) => {
         ) : (
           <List.Section>
             {forumList.map((forum) => (
-                <List.Item
-                  key={forum.id}
-                  title={`Title: ${forum.title}`}
-                  description={`Creator: ${forum.creator.first_name} ${forum.creator.last_name}`}
-                  titleStyle={formStyle.fontTitle}
-                  descriptionStyle={formStyle.fontCreator}
-                  style={componentsStyles.listItemForum}
-                  onPress={() => navigation.navigate("forumdetail", { forumId : forum.id })}
-                />
+              <List.Item
+                key={forum.id}
+                title={`Title: ${forum.title}`}
+                description={`Creator: ${forum.creator.first_name} ${forum.creator.last_name}`}
+                titleStyle={formStyle.fontTitle}
+                descriptionStyle={formStyle.fontCreator}
+                style={componentsStyles.listItemForum}
+                onPress={() =>
+                  navigation.navigate("forumdetail", { forumId: forum.id })
+                }
+              />
             ))}
           </List.Section>
         )}
