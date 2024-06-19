@@ -73,10 +73,11 @@ MIDDLEWARE = [
 ]
 
 
-ALLOWED_HOSTS = ['127.0.0.1', "192.168.27.103", '192.168.1.6']
+# ALLOWED_HOSTS = ['127.0.0.1', "192.168.27.103", '192.168.1.6']
 
 # ALLOWED_HOSTS = ['192.168.7.103', '127.0.0.1', "localhost", "192.168.1.3"]
-ALLOWED_HOSTS = ['127.0.0.1', "localhost", '192.168.1.6']
+# ALLOWED_HOSTS = ['127.0.0.1', "localhost", '192.168.1.6']
+ALLOWED_HOSTS = ['127.0.0.1', "localhost", '192.168.1.2']
 
 
 ROOT_URLCONF = 'score_management.urls'
@@ -107,8 +108,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'score_management_db',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
+        'USER': 'root',
+        'PASSWORD': 'Admin@123',
 
     }
 }

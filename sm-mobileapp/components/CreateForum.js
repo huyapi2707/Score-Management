@@ -1,31 +1,28 @@
 import React, { useState } from "react";
 import { View, Alert } from "react-native";
-import { Text, TextInput, Button, ActivityIndicator } from "react-native-paper";
+import { Text, TextInput, Button } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apis, endpoint } from "../configs/apis";
 import globalStyle from "../styles/globalStyle";
 import formStyle from "../styles/formStyle";
+import EditorScreen from "./EditorScreen";
 
 const CreateForum = ({ route, navigation }) => {
   const courseId = route.params?.courseId;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [isAdvancedMode, setIsAdvancedMode] = useState(true);
 
   const createForum = async () => {
     if (!title || !content) {
-      setError("Title and content cannot be empty");
+      Alert.alert("Title and content cannot be empty");
       return;
     }
 
     setLoading(true);
     try {
       const accessToken = await AsyncStorage.getItem("accessToken");
-      if (!accessToken) {
-        throw new Error("Access token is missing");
-      }
-
       const response = await apis(accessToken).post(endpoint.forum(courseId), {
         title,
         content,
@@ -35,18 +32,21 @@ const CreateForum = ({ route, navigation }) => {
         Alert.alert("Success", "Forum has been created successfully", [
           {
             text: "OK",
-            onPress: () => navigation.goBack()
-          }
+            onPress: () => navigation.goBack(),
+          },
         ]);
       } else {
-        setError("Failed to create forum");
+        Alert.alert("Failed to create forum");
       }
     } catch (error) {
-      console.error("Error creating forum:", error);
-      setError("Error creating forum: " + error.message);
+      console.error(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleRichTextMode = () => {
+    setIsAdvancedMode(!isAdvancedMode);
   };
 
   return (
@@ -54,7 +54,6 @@ const CreateForum = ({ route, navigation }) => {
       <View style={[globalStyle.flexCenter, globalStyle.margin]}>
         <Text variant="titleLarge">Create Forum</Text>
       </View>
-      {error && <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>}
       <View style={formStyle.formCreate}>
         <TextInput
           mode="outlined"
@@ -62,18 +61,29 @@ const CreateForum = ({ route, navigation }) => {
           value={title}
           onChangeText={setTitle}
         />
-        <TextInput
-          mode="outlined"
-          label="Content"
-          multiline
-          value={content}
-          onChangeText={setContent}
-        />
+        {isAdvancedMode ? (
+          <TextInput
+            mode="outlined"
+            label="Content"
+            multiline
+            value={content}
+            onChangeText={setContent}
+          />
+        ) : (
+          <EditorScreen
+            content={content}
+            setContent={setContent}
+            isAdvancedMode={isAdvancedMode}
+            />
+        )}
+        <Button style={formStyle.right} onPress={() => toggleRichTextMode()}>
+          {isAdvancedMode ? "Advance" : "Basic"}
+        </Button>
         <Button
           mode="contained"
           onPress={createForum}
           disabled={loading || !title || !content}
-          style={{marginTop:10}}
+          style={{ marginTop: 10 }}
           loading={loading}
         >
           Create
