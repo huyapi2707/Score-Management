@@ -158,6 +158,7 @@ class ForumForm(forms.ModelForm):
         model = Forum
         fields = ['title', 'content']
 
+
 class ForumSerializer(serializers.ModelSerializer):
     form = ForumForm
     creator = UserSerializer()
@@ -171,7 +172,7 @@ class ForumSerializer(serializers.ModelSerializer):
 
 class ForumAnswerSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
+    parent_content = serializers.CharField(source='parent.content', read_only=True)
     class Meta:
         model = ForumAnswer
         fields = '__all__'
-

@@ -299,52 +299,55 @@ const LecturerCourse = ({ route, navigation }) => {
           </DataTable>
           {renderAddScoreColumnButton()}
         </View>
+        <Portal>
+          <Dialog visible={openAddColumn}>
+            <Dialog.Title>Add new score column</Dialog.Title>
+            <Dialog.Content>
+              <TextInput
+                value={newColumn["name"]}
+                onChangeText={(text) =>
+                  setNewColumn((newColumn) => {
+                    setValidateMessage(null);
+                    return {
+                      ...newColumn,
+                      name: text,
+                    };
+                  })
+                }
+                mode="flat"
+                label="Column name"
+              />
+              <TextInput
+                onChangeText={(text) =>
+                  setNewColumn((newColumn) => {
+                    setValidateMessage(null);
+                    return {
+                      ...newColumn,
+                      percentage: parseFloat(text),
+                    };
+                  })
+                }
+                value={new String(newColumn["percentage"])}
+                keyboardType="numeric"
+                mode="flat"
+                label="Percentage"
+              />
+              <Text
+                style={componentsStyles["errorMessage"]}
+                variant="bodySmall"
+              >
+                {validateMessage}
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button textColor="red" onPress={() => setOpenAddColumn(false)}>
+                Cancel
+              </Button>
+              <Button onPress={handleAddColumn}>Add</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </View>
-      <Portal>
-        <Dialog visible={openAddColumn}>
-          <Dialog.Title>Add new score column</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              value={newColumn["name"]}
-              onChangeText={(text) =>
-                setNewColumn((newColumn) => {
-                  setValidateMessage(null);
-                  return {
-                    ...newColumn,
-                    name: text,
-                  };
-                })
-              }
-              mode="flat"
-              label="Column name"
-            />
-            <TextInput
-              onChangeText={(text) =>
-                setNewColumn((newColumn) => {
-                  setValidateMessage(null);
-                  return {
-                    ...newColumn,
-                    percentage: parseFloat(text),
-                  };
-                })
-              }
-              value={new String(newColumn["percentage"])}
-              keyboardType="numeric"
-              mode="flat"
-              label="Percentage"
-            />
-            <Text style={componentsStyles["errorMessage"]} variant="bodySmall">
-              {validateMessage}
-            </Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button textColor="red" onPress={() => setOpenAddColumn(false)}>
-              Cancel
-            </Button>
-            <Button onPress={handleAddColumn}>Add</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
     </ScrollView>
   );
 };

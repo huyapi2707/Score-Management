@@ -20,9 +20,11 @@ const endpoint = {
   forum: (courseId) => `/courses/${courseId}/create_forum/`,
   listForum: (courseId) => `/forums/course/${courseId}/`,
   forumDetail: (forumId) => `/forums/${forumId}/`,
-  forumAnswerParrent: (forumId) => `forums/${forumId}/parent-answers`,
+  forumAnswerParent: (forumId) => `forums/${forumId}/parent-answers`,
   forumAnswerChild: (forumAnswerId) =>
     `forumanswers/${forumAnswerId}/child-answers`,
+  createAnswer: (forumId) => `/forums/${forumId}/forum-answer-parents/`,
+  createAnswerChild: (answerId) => `/forumanswers/${answerId}/answers/`,
 };
 
 const apis = (accessToken) => {

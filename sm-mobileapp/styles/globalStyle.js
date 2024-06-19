@@ -73,4 +73,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  marginLeft: {
+    marginLeft: 20,
+  },
 });
